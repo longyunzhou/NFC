@@ -1,0 +1,6 @@
+d:\a\1\s\Unity.Compat\bin\Release\Unity\Unity.Compat.xml
+d:\a\1\s\Unity.Compat\bin\Release\Unity\Unity.Compat.dll
+d:\a\1\s\Unity.Compat\bin\Release\Unity\Unity.Compat.pdb
+d:\a\1\s\Unity.Compat\obj\Release\Unity.Compat.csprojResolveAssemblyReference.cache
+d:\a\1\s\Unity.Compat\obj\Release\Unity.Compat.dll
+d:\a\1\s\Unity.Compat\obj\Release\Unity.Compat.pdb

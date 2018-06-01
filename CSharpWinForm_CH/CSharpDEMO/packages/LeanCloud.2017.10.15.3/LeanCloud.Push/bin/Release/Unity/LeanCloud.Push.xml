@@ -1,0 +1,478 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LeanCloud.Push</name>
+    </assembly>
+    <members>
+        <member name="M:LeanCloud.Push.Internal.IDeviceInfoController.ExecuteParseInstallationSaveHookAsync(LeanCloud.AVInstallation)">
+            <summary>
+            Executes platform specific hook that mutate the installation based on
+            the device platforms.
+            </summary>
+            <param name="installation">Installation to be mutated.</param>
+            <returns></returns>
+        </member>
+        <member name="T:LeanCloud.Push.Internal.DeviceInfoController">
+            <summary>
+            This is a concrete implementation of IDeviceInfoController for Unity iOS targets.
+            </summary>
+        </member>
+        <member name="M:LeanCloud.Push.Internal.DeviceInfoController.RegisterDeviceTokenRequest(System.Action{System.Byte[]})">
+            <summary>
+            Registers a callback for a device token request.
+            </summary>
+            <param name="action"></param>
+        </member>
+        <member name="M:LeanCloud.Push.Internal.DeviceInfoController.RegisteriOSPushNotificationListener(System.Action{System.Collections.Generic.IDictionary{System.String,System.Object}})">
+            <summary>
+            Registers a callback for push notifications.
+            </summary>
+            <param name="action"></param>
+        </member>
+        <member name="T:LeanCloud.AVInstallation">
+            <summary>
+             Represents this app installed on this device. Use this class to track information you want
+             to sample from (i.e. if you update a field on app launch, you can issue a query to see
+             the number of devices which were active in the last N hours).
+            </summary>
+        </member>
+        <member name="M:LeanCloud.AVInstallation.#ctor">
+            <summary>
+            Constructs a new AVInstallation. Generally, you should not need to construct
+            ParseInstallations yourself. Instead use <see cref="P:LeanCloud.AVInstallation.CurrentInstallation"/>.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVInstallation.CurrentInstallation">
+            <summary>
+            Gets the AVInstallation representing this app on this device.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVInstallation.Query">
+             <summary>
+             Constructs a <see cref="T:LeanCloud.AVQuery`1"/> for ParseInstallations.
+             </summary>
+             <remarks>
+             Only the following types of queries are allowed for installations:
+            
+             <code>
+             query.GetAsync(objectId)
+             query.WhereEqualTo(key, value)
+             query.WhereMatchesKeyInQuery&lt;TOther&gt;(key, keyInQuery, otherQuery)
+             </code>
+            
+             You can add additional query conditions, but one of the above must appear as a top-level <c>AND</c>
+             clause in the query.
+             </remarks>
+        </member>
+        <member name="P:LeanCloud.AVInstallation.InstallationId">
+            <summary>
+            A GUID that uniquely names this app installed on this device.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVInstallation.DeviceType">
+            <summary>
+            The runtime target of this installation object.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVInstallation.AppName">
+            <summary>
+            The user-friendly display name of this application.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVInstallation.AppVersion">
+            <summary>
+            A version string consisting of Major.Minor.Build.Revision.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVInstallation.AppIdentifier">
+            <summary>
+            The system-dependent unique identifier of this installation. This identifier should be
+            sufficient to distinctly name an app on stores which may allow multiple apps with the
+            same display name.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVInstallation.TimeZone">
+            <summary>
+            The time zone in which this device resides. This string is in the tz database format
+            LeanCloud uses for local-time pushes. Due to platform restrictions, the mapping is less
+            granular on Windows than it may be on other systems. E.g. The zones
+            America/Vancouver America/Dawson America/Whitehorse, America/Tijuana, PST8PDT, and
+            America/Los_Angeles are all reported as America/Los_Angeles.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVInstallation.LocaleIdentifier">
+            <summary>
+            The users locale. This field gets automatically populated by the SDK.
+            Can be null (LeanCloud Push uses default language in this case).
+            </summary>
+        </member>
+        <member name="M:LeanCloud.AVInstallation.GetLocaleIdentifier">
+            <summary>
+            Gets the locale identifier in the format: [language code]-[COUNTRY CODE].
+            </summary>
+            <returns>The locale identifier in the format: [language code]-[COUNTRY CODE].</returns>
+        </member>
+        <member name="P:LeanCloud.AVInstallation.AVVersion">
+            <summary>
+            The version of the LeanCloud SDK used to build this application.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVInstallation.Channels">
+            <summary>
+            A sequence of arbitrary strings which are used to identify this installation for push notifications.
+            By convention, the empty string is known as the "Broadcast" channel.
+            </summary>
+        </member>
+        <member name="F:LeanCloud.AVInstallation.TimeZoneNameMap">
+            <summary>
+            This mapping of Windows names to a standard everyone else uses is maintained
+            by the Unicode consortium, which makes this officially the first helpful
+            interaction between Unicode and Microsoft.
+            Unfortunately this is a little lossy in that we only store the first mapping in each zone because
+            Microsoft does not give us more granular location information.
+            Built from http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/zone_tzid.html
+            </summary>
+        </member>
+        <member name="F:LeanCloud.AVInstallation.TimeZoneOffsetMap">
+            <summary>
+            This is a mapping of odd TimeZone offsets to their respective IANA codes across the world.
+            This list was compiled from painstakingly pouring over the information available at
+            https://en.wikipedia.org/wiki/List_of_tz_database_time_zones.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVInstallation.Badge">
+            <summary>
+            iOS Badge.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVInstallation.DeviceToken">
+            <summary>
+            The device token of the installation. Typically generated by APNS or GCM.
+            </summary>
+        </member>
+        <member name="M:LeanCloud.AVInstallation.SetDeviceTokenFromData(System.Byte[])">
+            <summary>
+            Sets <see cref="!:ParseInstallation.DeviceToken"/> with byte array provided by APNS.
+            </summary>
+            <remarks>
+            This method is only useful for iOS/MacOSX platform.
+            </remarks>
+            <param name="deviceToken"></param>
+        </member>
+        <member name="T:LeanCloud.AVPush">
+            <summary>
+             A utility class for sending and receiving push notifications.
+            </summary>
+        </member>
+        <member name="M:LeanCloud.AVPush.#ctor">
+            <summary>
+            Creates a push which will target every device. The Data field must be set before calling SendAsync.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVPush.Query">
+            <summary>
+            An installation query that specifies which installations should receive
+            this push.
+            This should not be used in tandem with Channels.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVPush.Channels">
+             <summary>
+             A short-hand to set a query which only discriminates on the channels to which a device is subscribed.
+             This is shorthand for:
+            
+             <code>
+             var push = new Push();
+             push.Query = AVInstallation.Query.WhereKeyContainedIn("channels", channels);
+             </code>
+            
+             This cannot be used in tandem with Query.
+             </summary>
+        </member>
+        <member name="P:LeanCloud.AVPush.Expiration">
+            <summary>
+            The time at which this push will expire. This should not be used in tandem with ExpirationInterval.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVPush.PushTime">
+            <summary>
+            The time at which this push will be sent.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVPush.ExpirationInterval">
+            <summary>
+            The time from initial schedul when this push will expire. This should not be used in tandem with Expiration.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVPush.Data">
+            <summary>
+            The contents of this push. Some keys have special meaning. A full list of pre-defined
+            keys can be found in the LeanCloud Push Guide. The following keys affect WinRT devices.
+            Keys which do not start with x-winrt- can be prefixed with x-winrt- to specify an
+            override only sent to winrt devices.
+            alert: the body of the alert text.
+            title: The title of the text.
+            x-winrt-payload: A full XML payload to be sent to WinRT installations instead of
+                 the auto-layout.
+            This should not be used in tandem with Alert.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVPush.Alert">
+             <summary>
+             A convenience method which sets Data to a dictionary with alert as its only field. Equivalent to
+            
+             <code>
+             Data = new Dictionary&lt;string, object&gt; {{"alert", alert}};
+             </code>
+            
+             This should not be used in tandem with Data.
+             </summary>
+        </member>
+        <member name="M:LeanCloud.AVPush.SendAsync">
+            <summary>
+            Request a push to be sent. When this task completes, LeanCloud has successfully acknowledged a request
+            to send push notifications but has not necessarily finished sending all notifications
+            requested. The current status of recent push notifications can be seen in your Push Notifications
+            console on http://parse.com
+            </summary>
+            <returns>A Task for continuation.</returns>
+        </member>
+        <member name="M:LeanCloud.AVPush.SendAsync(System.Threading.CancellationToken)">
+            <summary>
+            Request a push to be sent. When this task completes, LeanCloud has successfully acknowledged a request
+            to send push notifications but has not necessarily finished sending all notifications
+            requested. The current status of recent push notifications can be seen in your Push Notifications
+            console on http://parse.com
+            </summary>
+            <param name="cancellationToken">CancellationToken to cancel the current operation.</param>
+        </member>
+        <member name="M:LeanCloud.AVPush.SendAlertAsync(System.String)">
+             <summary>
+             Pushes a simple message to every device. This is shorthand for:
+            
+             <code>
+             var push = new AVPush();
+             push.Data = new Dictionary&lt;string, object&gt;{{"alert", alert}};
+             return push.SendAsync();
+             </code>
+             </summary>
+             <param name="alert">The alert message to send.</param>
+        </member>
+        <member name="M:LeanCloud.AVPush.SendAlertAsync(System.String,System.String)">
+             <summary>
+             Pushes a simple message to every device subscribed to channel. This is shorthand for:
+            
+             <code>
+             var push = new AVPush();
+             push.Channels = new List&lt;string&gt; { channel };
+             push.Data = new Dictionary&lt;string, object&gt;{{"alert", alert}};
+             return push.SendAsync();
+             </code>
+             </summary>
+             <param name="alert">The alert message to send.</param>
+             <param name="channel">An Installation must be subscribed to channel to receive this Push Notification.</param>
+        </member>
+        <member name="M:LeanCloud.AVPush.SendAlertAsync(System.String,System.Collections.Generic.IEnumerable{System.String})">
+             <summary>
+             Pushes a simple message to every device subscribed to any of channels. This is shorthand for:
+            
+             <code>
+             var push = new AVPush();
+             push.Channels = channels;
+             push.Data = new Dictionary&lt;string, object&gt;{{"alert", alert}};
+             return push.SendAsync();
+             </code>
+             </summary>
+             <param name="alert">The alert message to send.</param>
+             <param name="channels">An Installation must be subscribed to any of channels to receive this Push Notification.</param>
+        </member>
+        <member name="M:LeanCloud.AVPush.SendAlertAsync(System.String,LeanCloud.AVQuery{LeanCloud.AVInstallation})">
+             <summary>
+             Pushes a simple message to every device matching the target query. This is shorthand for:
+            
+             <code>
+             var push = new AVPush();
+             push.Query = query;
+             push.Data = new Dictionary&lt;string, object&gt;{{"alert", alert}};
+             return push.SendAsync();
+             </code>
+             </summary>
+             <param name="alert">The alert message to send.</param>
+             <param name="query">A query filtering the devices which should receive this Push Notification.</param>
+        </member>
+        <member name="M:LeanCloud.AVPush.SendDataAsync(System.Collections.Generic.IDictionary{System.String,System.Object})">
+             <summary>
+             Pushes an arbitrary payload to every device. This is shorthand for:
+            
+             <code>
+             var push = new AVPush();
+             push.Data = data;
+             return push.SendAsync();
+             </code>
+             </summary>
+             <param name="data">A push payload. See the AVPush.Data property for more information.</param>
+        </member>
+        <member name="M:LeanCloud.AVPush.SendDataAsync(System.Collections.Generic.IDictionary{System.String,System.Object},System.String)">
+             <summary>
+             Pushes an arbitrary payload to every device subscribed to channel. This is shorthand for:
+            
+             <code>
+             var push = new AVPush();
+             push.Channels = new List&lt;string&gt; { channel };
+             push.Data = data;
+             return push.SendAsync();
+             </code>
+             </summary>
+             <param name="data">A push payload. See the AVPush.Data property for more information.</param>
+             <param name="channel">An Installation must be subscribed to channel to receive this Push Notification.</param>
+        </member>
+        <member name="M:LeanCloud.AVPush.SendDataAsync(System.Collections.Generic.IDictionary{System.String,System.Object},System.Collections.Generic.IEnumerable{System.String})">
+             <summary>
+             Pushes an arbitrary payload to every device subscribed to any of channels. This is shorthand for:
+            
+             <code>
+             var push = new AVPush();
+             push.Channels = channels;
+             push.Data = data;
+             return push.SendAsync();
+             </code>
+             </summary>
+             <param name="data">A push payload. See the AVPush.Data property for more information.</param>
+             <param name="channels">An Installation must be subscribed to any of channels to receive this Push Notification.</param>
+        </member>
+        <member name="M:LeanCloud.AVPush.SendDataAsync(System.Collections.Generic.IDictionary{System.String,System.Object},LeanCloud.AVQuery{LeanCloud.AVInstallation})">
+             <summary>
+             Pushes an arbitrary payload to every device matching target. This is shorthand for:
+            
+             <code>
+             var push = new AVPush();
+             push.Query = query
+             push.Data = data;
+             return push.SendAsync();
+             </code>
+             </summary>
+             <param name="data">A push payload. See the AVPush.Data property for more information.</param>
+             <param name="query">A query filtering the devices which should receive this Push Notification.</param>
+        </member>
+        <member name="E:LeanCloud.AVPush.ParsePushNotificationReceived">
+            <summary>
+            An event fired when a push notification is received.
+            </summary>
+        </member>
+        <member name="M:LeanCloud.AVPush.SubscribeAsync(System.String)">
+             <summary>
+             Subscribe the current installation to this channel. This is shorthand for:
+            
+             <code>
+             var installation = AVInstallation.CurrentInstallation;
+             installation.AddUniqueToList("channels", channel);
+             installation.SaveAsync();
+             </code>
+             </summary>
+             <param name="channel">The channel to which this installation should subscribe.</param>
+        </member>
+        <member name="M:LeanCloud.AVPush.SubscribeAsync(System.String,System.Threading.CancellationToken)">
+             <summary>
+             Subscribe the current installation to this channel. This is shorthand for:
+            
+             <code>
+             var installation = AVInstallation.CurrentInstallation;
+             installation.AddUniqueToList("channels", channel);
+             installation.SaveAsync(cancellationToken);
+             </code>
+             </summary>
+             <param name="channel">The channel to which this installation should subscribe.</param>
+             <param name="cancellationToken">CancellationToken to cancel the current operation.</param>
+        </member>
+        <member name="M:LeanCloud.AVPush.SubscribeAsync(System.Collections.Generic.IEnumerable{System.String})">
+             <summary>
+             Subscribe the current installation to these channels. This is shorthand for:
+            
+             <code>
+             var installation = AVInstallation.CurrentInstallation;
+             installation.AddRangeUniqueToList("channels", channels);
+             installation.SaveAsync();
+             </code>
+             </summary>
+             <param name="channels">The channels to which this installation should subscribe.</param>
+        </member>
+        <member name="M:LeanCloud.AVPush.SubscribeAsync(System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+             <summary>
+             Subscribe the current installation to these channels. This is shorthand for:
+            
+             <code>
+             var installation = AVInstallation.CurrentInstallation;
+             installation.AddRangeUniqueToList("channels", channels);
+             installation.SaveAsync(cancellationToken);
+             </code>
+             </summary>
+             <param name="channels">The channels to which this installation should subscribe.</param>
+             <param name="cancellationToken">CancellationToken to cancel the current operation.</param>
+        </member>
+        <member name="M:LeanCloud.AVPush.UnsubscribeAsync(System.String)">
+             <summary>
+             Unsubscribe the current installation from this channel. This is shorthand for:
+            
+             <code>
+             var installation = AVInstallation.CurrentInstallation;
+             installation.Remove("channels", channel);
+             installation.SaveAsync();
+             </code>
+             </summary>
+             <param name="channel">The channel from which this installation should unsubscribe.</param>
+        </member>
+        <member name="M:LeanCloud.AVPush.UnsubscribeAsync(System.String,System.Threading.CancellationToken)">
+             <summary>
+             Unsubscribe the current installation from this channel. This is shorthand for:
+            
+             <code>
+             var installation = AVInstallation.CurrentInstallation;
+             installation.Remove("channels", channel);
+             installation.SaveAsync(cancellationToken);
+             </code>
+             </summary>
+             <param name="channel">The channel from which this installation should unsubscribe.</param>
+             <param name="cancellationToken">CancellationToken to cancel the current operation.</param>
+        </member>
+        <member name="M:LeanCloud.AVPush.UnsubscribeAsync(System.Collections.Generic.IEnumerable{System.String})">
+             <summary>
+             Unsubscribe the current installation from these channels. This is shorthand for:
+            
+             <code>
+             var installation = AVInstallation.CurrentInstallation;
+             installation.RemoveAllFromList("channels", channels);
+             installation.SaveAsync();
+             </code>
+             </summary>
+             <param name="channels">The channels from which this installation should unsubscribe.</param>
+        </member>
+        <member name="M:LeanCloud.AVPush.UnsubscribeAsync(System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+             <summary>
+             Unsubscribe the current installation from these channels. This is shorthand for:
+            
+             <code>
+             var installation = AVInstallation.CurrentInstallation;
+             installation.RemoveAllFromList("channels", channels);
+             installation.SaveAsync(cancellationToken);
+             </code>
+             </summary>
+             <param name="channels">The channels from which this installation should unsubscribe.</param>
+             <param name="cancellationToken">CancellationToken to cancel the current operation.</param>
+        </member>
+        <member name="T:LeanCloud.AVPushNotificationEventArgs">
+            <summary>
+            A wrapper around LeanCloud push notification payload.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVPushNotificationEventArgs.Payload">
+            <summary>
+            The payload of the push notification as <c>IDictionary</c>.
+            </summary>
+        </member>
+        <member name="P:LeanCloud.AVPushNotificationEventArgs.StringPayload">
+            <summary>
+            The payload of the push notification as <c>string</c>.
+            </summary>
+        </member>
+    </members>
+</doc>

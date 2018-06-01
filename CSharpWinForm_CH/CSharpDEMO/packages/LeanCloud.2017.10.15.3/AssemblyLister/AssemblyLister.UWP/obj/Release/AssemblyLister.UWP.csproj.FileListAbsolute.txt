@@ -1,0 +1,17 @@
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\bin\Release\AssemblyLister.dll
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\bin\Release\AssemblyLister.pdb
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\bin\Release\AssemblyLister.pri
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\obj\Release\AssemblyLister.UWP.csprojResolveAssemblyReference.cache
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\obj\Release\AssemblyLister.dll
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\obj\Release\AssemblyLister.pdb
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\obj\Release\priconfig.xml
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\obj\Release\priconfig.xml.intermediate
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\obj\Release\layout.resfiles
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\obj\Release\layout.resfiles.intermediate
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\obj\Release\resources.resfiles
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\obj\Release\resources.resfiles.intermediate
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\obj\Release\pri.resfiles
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\obj\Release\pri.resfiles.intermediate
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\obj\Release\qualifiers.txt
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\obj\Release\qualifiers.txt.intermediate
+d:\a\1\s\AssemblyLister\AssemblyLister.UWP\obj\Release\MultipleQualifiersPerDimensionFound.txt

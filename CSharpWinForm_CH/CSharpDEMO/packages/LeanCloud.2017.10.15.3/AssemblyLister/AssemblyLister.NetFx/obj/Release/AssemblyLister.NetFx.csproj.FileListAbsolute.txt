@@ -1,0 +1,5 @@
+d:\a\1\s\AssemblyLister\AssemblyLister.NetFx\bin\Release\AssemblyLister.dll
+d:\a\1\s\AssemblyLister\AssemblyLister.NetFx\bin\Release\AssemblyLister.pdb
+d:\a\1\s\AssemblyLister\AssemblyLister.NetFx\obj\Release\AssemblyLister.NetFx.csprojResolveAssemblyReference.cache
+d:\a\1\s\AssemblyLister\AssemblyLister.NetFx\obj\Release\AssemblyLister.dll
+d:\a\1\s\AssemblyLister\AssemblyLister.NetFx\obj\Release\AssemblyLister.pdb

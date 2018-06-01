@@ -1,0 +1,9 @@
+d:\a\1\s\Unity.Tasks\bin\Release\Unity\Unity.Tasks.xml
+d:\a\1\s\Unity.Tasks\bin\Release\Unity\Unity.Tasks.dll
+d:\a\1\s\Unity.Tasks\bin\Release\Unity\Unity.Tasks.pdb
+d:\a\1\s\Unity.Tasks\bin\Release\Unity\Unity.Compat.dll
+d:\a\1\s\Unity.Tasks\bin\Release\Unity\Unity.Compat.pdb
+d:\a\1\s\Unity.Tasks\bin\Release\Unity\Unity.Compat.xml
+d:\a\1\s\Unity.Tasks\obj\Release\Unity.Tasks.csprojResolveAssemblyReference.cache
+d:\a\1\s\Unity.Tasks\obj\Release\Unity.Tasks.dll
+d:\a\1\s\Unity.Tasks\obj\Release\Unity.Tasks.pdb

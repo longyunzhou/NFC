@@ -1,0 +1,14 @@
+d:\a\1\s\LeanCloud.Storage\bin\Release\Unity\LeanCloud.Storage.xml
+d:\a\1\s\LeanCloud.Storage\bin\Release\Unity\LeanCloud.Storage.dll
+d:\a\1\s\LeanCloud.Storage\bin\Release\Unity\LeanCloud.Storage.pdb
+d:\a\1\s\LeanCloud.Storage\bin\Release\Unity\AssemblyLister.dll
+d:\a\1\s\LeanCloud.Storage\bin\Release\Unity\Unity.Compat.dll
+d:\a\1\s\LeanCloud.Storage\bin\Release\Unity\Unity.Tasks.dll
+d:\a\1\s\LeanCloud.Storage\bin\Release\Unity\AssemblyLister.pdb
+d:\a\1\s\LeanCloud.Storage\bin\Release\Unity\Unity.Compat.pdb
+d:\a\1\s\LeanCloud.Storage\bin\Release\Unity\Unity.Compat.xml
+d:\a\1\s\LeanCloud.Storage\bin\Release\Unity\Unity.Tasks.pdb
+d:\a\1\s\LeanCloud.Storage\bin\Release\Unity\Unity.Tasks.xml
+d:\a\1\s\LeanCloud.Storage\obj\Release\LeanCloud.Storage.Unity.csprojResolveAssemblyReference.cache
+d:\a\1\s\LeanCloud.Storage\obj\Release\LeanCloud.Storage.dll
+d:\a\1\s\LeanCloud.Storage\obj\Release\LeanCloud.Storage.pdb

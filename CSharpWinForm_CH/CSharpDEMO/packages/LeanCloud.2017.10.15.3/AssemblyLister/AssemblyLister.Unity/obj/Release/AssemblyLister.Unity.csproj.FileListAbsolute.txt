@@ -1,0 +1,5 @@
+d:\a\1\s\AssemblyLister\AssemblyLister.Unity\bin\Release\AssemblyLister.dll
+d:\a\1\s\AssemblyLister\AssemblyLister.Unity\bin\Release\AssemblyLister.pdb
+d:\a\1\s\AssemblyLister\AssemblyLister.Unity\obj\Release\AssemblyLister.Unity.csprojResolveAssemblyReference.cache
+d:\a\1\s\AssemblyLister\AssemblyLister.Unity\obj\Release\AssemblyLister.dll
+d:\a\1\s\AssemblyLister\AssemblyLister.Unity\obj\Release\AssemblyLister.pdb
