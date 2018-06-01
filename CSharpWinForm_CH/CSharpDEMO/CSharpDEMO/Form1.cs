@@ -14,6 +14,7 @@ using LeanCloud;
 using System.Threading;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection; // 引用这个才能使用Missing字段 
 namespace CSharpDEMO
 {
     public partial class Form1 : Form
@@ -968,7 +969,8 @@ namespace CSharpDEMO
                 string courseTime = textBox_courseTime.Text;   //课时数
                 string stuTeacher = comboBox_stuTeacher.Text;
                 string age = textBox_age.Text;
-
+                string date = dateTimePicker2.Value.Date.ToString();
+                string date_YMD = date.Substring(0, date.Length - 8);
                 int times = Convert.ToInt16(courseTime);
                 int price = Convert.ToInt16(textBox_price.Text);
                 int sum_money = price * times;
@@ -989,42 +991,43 @@ namespace CSharpDEMO
                         MessageBox.Show("已经有注册信息，请删除后重新注册");
                         
                     }
+                    else
+                    {
+                        AVObject Student = new AVObject("Student");
+                        Student["Card_num"] = textBox_cardNum.Text;
+                        Student["name"] = textBox_name.Text;
+                        Student["tel"] = textBox_tel.Text;
+                        Student["gender"] = comboBox_gender.Text;
+                        Student["birth"] = comboBox_month.Text + comboBox_date.Text;
+                        Student["age"] = age;
+                        Student["courseName"] = comboBox_courseName.Text;
+                        Student["level"] = comboBox_level.Text;
+                        Student["courseType"] = comboBox_courseType.Text;
+                        Student["courseTime"] = courseTime;          //课时数
+                        Student["courseTimeLeft"] = courseTime;          //剩余课时数
+                        Student["price"] = price.ToString();          //课程单价
+                        Student["sum_money"] = sum_money.ToString();          //总费用
+                        Student["stuTeacher"] = stuTeacher;          //学生的老师
+
+                        
+                        Student["regTime"] = date_YMD;
+                        await Student.SaveAsync();
+                        writeCard(0x04, 1, s.KeyID2Card(Student.ObjectId));
+                        writeCard(0x02, 1, s.String2Unicode("学生"));
+                    }
                 }
                 catch(Exception erro){
                     MessageBox.Show("网络错误"+erro.Message);
                     this.Close();
                 }
-               
-               
-
-                AVObject Student = new AVObject("Student");
-                Student["Card_num"] = textBox_cardNum.Text;
-                Student["name"] = textBox_name.Text;
-                Student["tel"] = textBox_tel.Text;
                 Student["gender"] = comboBox_gender.Text;
-                Student["birth"] = comboBox_month.Text + comboBox_date.Text;
-                Student["age"] = age;
-                Student["courseName"] = comboBox_courseName.Text;
-                Student["level"] = comboBox_level.Text;
-                Student["courseType"] = comboBox_courseType.Text;
-                Student["courseTime"] = courseTime;          //课时数
-                Student["courseTimeLeft"] = courseTime;          //剩余课时数
-                Student["price"] = price.ToString();          //课程单价
-                Student["sum_money"] = sum_money.ToString();          //总费用
-                Student["stuTeacher"] = stuTeacher;          //学生的老师
 
-                string date = dateTimePicker2.Value.Date.ToString();
-                string date_YMD = date.Substring(0, date.Length - 8);
-                Student["regTime"] = date_YMD;
-                await Student.SaveAsync();
-
-
-               // while (Student.ObjectId == null)
+                // while (Student.ObjectId == null)
                 //{ Thread.Sleep(100); }
                 // MessageBox.Show(Student.ObjectId);
                 /********存储数据到卡中****************/
-                writeCard(0x04, 1, s.KeyID2Card(Student.ObjectId));
-                writeCard(0x02, 1, s.String2Unicode("学生"));
+                //writeCard(0x04, 1, s.KeyID2Card(Student.ObjectId));
+                // writeCard(0x02, 1, s.String2Unicode("学生"));
                 /*  删掉之后卡里只存身份和objectID*/
                 //writeCard(0x05, 1, s.String2Unicode(name));
                 //writeCard(0x06, 1, s.S2U(tel));   
@@ -1045,27 +1048,30 @@ namespace CSharpDEMO
                 /******************************************/
 
                 /********存储数据到本地sqlite**********************************/
-                sql = new sq("data source= D:/data/test.db");
-                //创建名为table1的数据表
-                sql.CreateTable("student", new string[] { "regTime", "Card_num", "Name", "tel", "gender", "birth", "age", "coureseName", "level", "courseType", "courseTime", "courseTimeLeft", "price", "sum_money", "stuTeacher" },
-                                            new string[] { "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "INTEGER", "TEXT", "TEXT", "TEXT", "INTEGER", "INTEGER", "INTEGER", "INTEGER", "TEXT" });
-                //插入数据
-                sql.InsertValues("student", new string[] { date_YMD, Card_num, name, tel, gender, birth, age, courseName, level, courseType, courseTime, courseTime, price.ToString(), sum_money.ToString(), stuTeacher });
-                sql.CloseConnection();
+                try
+                {
+                    sql = new sq("data source= D:/data/test.db");
+                    //创建名为table1的数据表
+                    sql.CreateTable("student", new string[] { "regTime", "Card_num", "Name", "tel", "gender", "birth", "age", "coureseName", "level", "courseType", "courseTime", "courseTimeLeft", "price", "sum_money", "stuTeacher" },
+                                                new string[] { "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "INTEGER", "TEXT", "TEXT", "TEXT", "INTEGER", "INTEGER", "INTEGER", "INTEGER", "TEXT" });
+                    //插入数据
+                    sql.InsertValues("student", new string[] { date_YMD, Card_num, name, tel, gender, birth, age, courseName, level, courseType, courseTime, courseTime, price.ToString(), sum_money.ToString(), stuTeacher });
+                    sql.CloseConnection();
 
+                }
+                catch (Exception erro)
+                {
+                    MessageBox.Show("本地数据存储错误" + erro.Message);
+                    this.Close();
+                }
                 /***********************************************************/
                 // 再检查一遍，同时鸣笛一声。
-                if (Student.ObjectId != null)
-                {
-                    byte[] buffer = new byte[1];
-                    int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
-                    int nRet_led = Reader.ControlLED(20, 3, buffer);
-                    MessageBox.Show("注册完成");
-                }
-                else
-                {
-                    MessageBox.Show("请检查网络连接！");
-                }
+
+                byte[] buffer = new byte[1];
+                int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
+                int nRet_led = Reader.ControlLED(20, 3, buffer);
+                MessageBox.Show("注册完成");
+             
                
             }
         }
@@ -1154,6 +1160,7 @@ namespace CSharpDEMO
             if (nRet != 0)
             {
                 MessageBox.Show("数据传输出错，需要重启机器！");
+                this.Close();
             }
             /*
             else
