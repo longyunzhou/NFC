@@ -167,3 +167,4 @@ E:\Github_project\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpD
 E:\Github_project\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.csproj.CopyComplete
 E:\Github_project\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.exe
 E:\Github_project\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.pdb
+E:\Github_project\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.csproj.ResolveComReference.cache

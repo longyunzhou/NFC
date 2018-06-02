@@ -12,7 +12,11 @@ using CSharpDEMO;
 using System.Text.RegularExpressions;
 using LeanCloud;
 using System.Threading;
-
+//using ;
+using Excel = Microsoft.Office.Interop.Excel;
+using System.IO;
+using System.Data.SQLite;
+using System.Reflection; // 引用这个才能使用Missing字段 
 
 namespace CSharpDEMO
 {
@@ -239,6 +243,71 @@ namespace CSharpDEMO
             }
             //按照指定编码将字节数组变为字符串
             return encode.GetString(b);
+        }
+
+        private int WriteE(string path)
+        {
+            Excel.Application excelApp = new Excel.Application();
+            if (excelApp == null)
+            {
+                // if equal null means EXCEL is not installed.  
+                MessageBox.Show("Excel is not properly installed!");
+                return 0;
+            }
+
+            string filename = path;// @"D:\生产产量纪录.xls";
+            // open a workbook,if not exist, create a new one  
+            Excel.Workbook workBook;
+            if (File.Exists(filename))
+            {
+                workBook = excelApp.Workbooks.Open(filename, 0, false, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+            }
+            else
+            {
+                workBook = excelApp.Workbooks.Add(true);
+            }
+            //new a worksheet  
+            Excel.Worksheet workSheet = workBook.ActiveSheet as Excel.Worksheet;
+            //write data
+            workSheet = (Excel.Worksheet)workBook.Worksheets.get_Item(1);//获得第i个sheet，准备写入  
+            workSheet.Cells[1, 1] = "注册时间";
+            workSheet.Cells[1, 2] = "卡号";
+            workSheet.Cells[1, 3] = "姓名";
+            workSheet.Cells[1, 4] = "电话";
+            workSheet.Cells[1, 5] = "性别";
+            workSheet.Cells[1, 6] = "生日";
+            workSheet.Cells[1, 7] = "年龄";
+            workSheet.Cells[1, 8] = "课程";
+            workSheet.Cells[1, 9] = "级别";
+            workSheet.Cells[1, 10] = "课程类型";
+            workSheet.Cells[1, 11] = "总课时";
+            workSheet.Cells[1, 12] = "剩余课时";
+            workSheet.Cells[1, 13] = "价格";
+            workSheet.Cells[1, 14] = "总钱数";
+            workSheet.Cells[1, 15] = "老师";
+
+            Microsoft.Office.Interop.Excel.Range range = workSheet.UsedRange;            
+            int colCount = range.Columns.Count;
+            int rowCount = range.Rows.Count;
+           
+
+
+            workSheet.Cells[rowCount + 1, 1] = "1";
+            workSheet.Cells[rowCount + 1, 2] = "2";
+            workSheet.Cells[rowCount + 1, 3] = "3";
+            //set visible the Excel will run in background  
+            excelApp.Visible = false;
+            //set false the alerts will not display  
+            excelApp.DisplayAlerts = false;
+            workBook.SaveAs(filename);
+            workBook.Close(false, Missing.Value, Missing.Value);
+            //quit and clean up objects  
+            excelApp.Quit();
+            workSheet = null;
+            workBook = null;
+            excelApp = null;
+            GC.Collect();
+            return 1;
         }
     }
 

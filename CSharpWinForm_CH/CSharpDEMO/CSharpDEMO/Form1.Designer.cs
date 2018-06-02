@@ -1825,8 +1825,14 @@
             this.comboBox_teacherCourse.FormattingEnabled = true;
             this.comboBox_teacherCourse.Items.AddRange(new object[] {
             "吉他",
+            "尤克里里",
             "古筝",
-            "二胡"});
+            "二胡",
+            "钢琴",
+            "电子琴",
+            "小提琴",
+            "萨克斯",
+            "竹笛"});
             this.comboBox_teacherCourse.Location = new System.Drawing.Point(91, 280);
             this.comboBox_teacherCourse.Name = "comboBox_teacherCourse";
             this.comboBox_teacherCourse.Size = new System.Drawing.Size(121, 20);
