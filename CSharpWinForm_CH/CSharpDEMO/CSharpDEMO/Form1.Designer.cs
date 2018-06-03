@@ -2026,11 +2026,11 @@
             // 
             this.label_title.AutoSize = true;
             this.label_title.Font = new System.Drawing.Font("楷体", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label_title.Location = new System.Drawing.Point(84, 46);
+            this.label_title.Location = new System.Drawing.Point(49, 39);
             this.label_title.Name = "label_title";
-            this.label_title.Size = new System.Drawing.Size(160, 24);
+            this.label_title.Size = new System.Drawing.Size(210, 24);
             this.label_title.TabIndex = 7;
-            this.label_title.Text = "琴行管理系统";
+            this.label_title.Text = "初练音乐管理系统";
             // 
             // label_cardNum
             // 

@@ -1582,8 +1582,8 @@ namespace CSharpDEMO
                     byte[] buffer = new byte[1];
                     int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
                     int nRet_led = Reader.ControlLED(20, 3, buffer);
-                    if(times-1==3)
-                    { MessageBox.Show("剩余课时只剩3课时，请注意充值"); }
+                    if(times-1<=3)
+                    { MessageBox.Show("当前剩余"+(times-1).ToString()+"课时"+"，请及时充值！"); }
                     MessageBox.Show("扣费成功！");
 
                     /*****存储数据到本地***************/
