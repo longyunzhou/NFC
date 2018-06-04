@@ -1496,7 +1496,7 @@ namespace CSharpDEMO
 
        async private void button_readinfo_Click(object sender, EventArgs e)
         {
-
+            
             textBox_wage.Visible = false;
             label_wage.Visible = false;
 
@@ -1553,7 +1553,7 @@ namespace CSharpDEMO
                 string courseTimeLeft = myObject.Get<String>("courseTimeLeft");   //剩余课时数
                 string coursePrice = myObject.Get<String>("price");   //单价
                 string objectID = myObject.ObjectId;
-                
+                MessageBox.Show("学生："+name+"刷卡");
                 int times = Convert.ToInt16(courseTimeLeft);
                 if (times == 0)
                 { MessageBox.Show("剩余课时为0，请充值"); }
