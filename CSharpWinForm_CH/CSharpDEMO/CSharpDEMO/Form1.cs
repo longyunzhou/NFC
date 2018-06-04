@@ -1552,8 +1552,9 @@ namespace CSharpDEMO
                 string courseTime = myObject.Get<String>("courseTime");   //总课时数
                 string courseTimeLeft = myObject.Get<String>("courseTimeLeft");   //剩余课时数
                 string coursePrice = myObject.Get<String>("price");   //单价
+
                 string objectID = myObject.ObjectId;
-                MessageBox.Show("学生："+name+"刷卡");
+                MessageBox.Show("学生："+name+" 刷卡");
                 int times = Convert.ToInt16(courseTimeLeft);
                 if (times == 0)
                 { MessageBox.Show("剩余课时为0，请充值"); }
@@ -1569,6 +1570,7 @@ namespace CSharpDEMO
                     Payroll["student"] = myObject.Get<String>("name");
                     Payroll["teacher"] = myObject.Get<String>("stuTeacher");
                     Payroll["pay"] = myObject.Get<String>("price");
+                    Payroll["courseName"] =courseName;
                     await Payroll.SaveAsync();
                     textBox_nameShow.Text = name;
                     textBox_shenfen.Text = "学生";
@@ -1592,10 +1594,10 @@ namespace CSharpDEMO
                     {
                         sql = new sq("data source= D:/data/test.db");
                         //创建名为payroll的数据表
-                        sql.CreateTable("payroll", new string[] { "time", "month", "student", "teacher", "pay" },
-                                                    new string[] { "TEXT", "TEXT", "TEXT", "TEXT", "INTEGER"});
+                        sql.CreateTable("payroll", new string[] { "time", "month", "student", "teacher", "pay","courseName" },
+                                                    new string[] { "TEXT", "TEXT", "TEXT", "TEXT", "INTEGER","TEXT"});
                         //插入数据
-                        sql.InsertValues("payroll", new string[] { DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss"), DateTime.Now.ToString("yyyyMM"), name,stuTeacher, coursePrice });
+                        sql.InsertValues("payroll", new string[] { DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss"), DateTime.Now.ToString("yyyyMM"), name,stuTeacher, coursePrice,courseName });
                         //need update data here
 
                         //关闭数据库
@@ -1631,7 +1633,8 @@ namespace CSharpDEMO
                         workSheet.Cells[1, 3] = "学生姓名";
                         workSheet.Cells[1, 4] = "老师姓名";
                         workSheet.Cells[1, 5] = "课程价格";
-                        
+                        workSheet.Cells[1, 6] = "课程";
+
 
                         Microsoft.Office.Interop.Excel.Range range = workSheet.UsedRange;
                         int colCount = range.Columns.Count;
@@ -1642,7 +1645,8 @@ namespace CSharpDEMO
                         workSheet.Cells[rowCount + 1, 3] = name;
                         workSheet.Cells[rowCount + 1, 4] = textBox_teacherShow.Text;
                         workSheet.Cells[rowCount + 1, 5] = coursePrice;
-                       
+                        workSheet.Cells[rowCount + 1, 6] = courseName;
+
                         //set visible the Excel will run in background  
                         excelApp.Visible = false;
                         //set false the alerts will not display  
@@ -2248,8 +2252,11 @@ namespace CSharpDEMO
                 AVObject teacher = query.FirstAsync().Result;
                 string fipath = @"d:\Pay\Payroll" + ym + teacher.Get<string>("teacher") + ".txt";
                 WriteMessage(fipath, "\n\n");
-                string title = "时间" + "\t\t\t" + "老师" + "\t" + "学生" + "\t" + "金额";
+                string title = "姓名："  + "老师" + "\n" + "课程：" + "" + "\n";
                 WriteMessage(fipath, title);
+
+                string firstline = "时间" + "\t\t\t" + "老师" + "\t" + "学生" + "\t" + "金额";
+                WriteMessage(fipath, firstline);
                 int sum = 0;
                 foreach (AVObject item in myObject)
                 {
