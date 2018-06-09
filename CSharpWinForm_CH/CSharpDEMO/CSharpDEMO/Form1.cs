@@ -2196,9 +2196,10 @@ namespace CSharpDEMO
 
        async private void button_savePayroll_Click(object sender, EventArgs e)
         {
-            
-            string ObID = "5b12c4a32f301e003841225e";
-            /*
+
+            //string ObID = "5b12c4a32f301e003841225e";
+            string ObID = "";
+           
             try
             {
                 //获取信息
@@ -2211,7 +2212,7 @@ namespace CSharpDEMO
                 this.Close();
 
             }
-            */
+            
             try
             {
                 AVQuery<AVObject> queryTea = new AVQuery<AVObject>("Teacher").WhereEqualTo("objectId", ObID);
@@ -2285,14 +2286,14 @@ namespace CSharpDEMO
                         WriteMessage(fipath, " ");
                         WriteMessage(fipath, " ");
                         WriteMessage(fipath, "老师签名：");
-                        /*
-                          Process pro = new Process();
-                          pro.StartInfo.FileName = fipath;//文件路径
-                          pro.StartInfo.CreateNoWindow = true;
-                          pro.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                          pro.StartInfo.Verb = "Print";
-                          pro.Start();
-                          */
+                       
+                        Process pro = new Process();
+                        pro.StartInfo.FileName = fipath;//文件路径
+                        pro.StartInfo.CreateNoWindow = true;
+                        pro.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                        pro.StartInfo.Verb = "Print";
+                        pro.Start();
+                          
                     }
                     catch (Exception ee)
                     {
