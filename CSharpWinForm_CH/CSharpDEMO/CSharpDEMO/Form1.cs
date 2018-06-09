@@ -2265,14 +2265,14 @@ namespace CSharpDEMO
                         string title3 = "分成比例：" + percent+"0%";
                         WriteMessage(fipath, title3);
                         WriteMessage(fipath, "------------------------------------------------------------------------");
-                        string firstline = "时间" + "\t\t\t" + "老师" + "\t" + "学生" + "\t" + "金额";
+                        string firstline = "时间" + "\t\t\t" + "老师" + "\t" + "学生" + "\t" + "课程" + "\t" + "金额";
                         WriteMessage(fipath, firstline);
                         WriteMessage(fipath, "------------------------------------------------------------------------");
                         int sum = 0;
                         foreach (AVObject item in myObject)
                         {
 
-                            string msg = item.Get<String>("time") + "\t\t" + item.Get<String>("teacher") + "\t" + item.Get<String>("student") + "\t" + item.Get<String>("pay");
+                            string msg = item.Get<String>("time") + "\t\t" + item.Get<String>("teacher") + "\t" + item.Get<String>("student")+ "\t" + item.Get<String>("courseName")+ "\t" + item.Get<String>("pay");
 
                             WriteMessage(fipath, msg);
                             sum = sum + Convert.ToInt16(item.Get<String>("pay"));
