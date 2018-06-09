@@ -2197,7 +2197,8 @@ namespace CSharpDEMO
        async private void button_savePayroll_Click(object sender, EventArgs e)
         {
             
-            string ObID = "";
+            string ObID = "5b12c4a32f301e003841225e";
+            /*
             try
             {
                 //获取信息
@@ -2210,6 +2211,7 @@ namespace CSharpDEMO
                 this.Close();
 
             }
+            */
             try
             {
                 AVQuery<AVObject> queryTea = new AVQuery<AVObject>("Teacher").WhereEqualTo("objectId", ObID);
@@ -2234,6 +2236,68 @@ namespace CSharpDEMO
                     string percent = myObjectTea.Get<String>("percent");
                     textBox_nameShow.Text=name;
                     textBox_telShow.Text=tel;
+
+                    try
+                    {
+                        string ym = DateTime.Now.ToString("yyyyMM");
+                        //string month = DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss");
+                        AVQuery<AVObject> query = new AVQuery<AVObject>("Payroll").WhereEqualTo("teacher", textBox_nameShow.Text).WhereEqualTo("month", ym);  //WhereEqualTo("tel",telNum).        
+                        IEnumerable<AVObject> myObject = await query.FindAsync();
+                        AVObject teacher = query.FirstAsync().Result;
+                        string fipath = @"d:\Pay\Payroll" + ym + teacher.Get<string>("teacher") + ".txt";
+
+                        /**************获取个数****/
+                        int num = 0;
+                        AVQuery<AVObject> querySTu = new AVQuery<AVObject>("Student").WhereEqualTo("stuTeacher", textBox_nameShow.Text);
+                        await querySTu.CountAsync().ContinueWith(t =>{num = t.Result;});
+                        /*************************/
+
+                        if (System.IO.File.Exists(fipath))
+                        { // MessageBox.Show("exist");
+                            File.Delete(fipath);
+                        }
+                        WriteMessage(fipath,DateTime.Now.ToString("yyyy年MM月报表--老师版"));
+                        WriteMessage(fipath, "------------------------------------------------------------------------");
+                        string title = "教师姓名：" + name;// + "\t" + "学生人数：" + num.ToString() + '\n'+"\n分成比例："+ percent+"\n";
+                        WriteMessage(fipath, title);
+                        string title2 = "学生人数：" + num.ToString();// + '\n' + "\n分成比例：" + percent + "\n";
+                        WriteMessage(fipath, title2);
+                        string title3 = "分成比例：" + percent+"0%";
+                        WriteMessage(fipath, title3);
+                        WriteMessage(fipath, "------------------------------------------------------------------------");
+                        string firstline = "时间" + "\t\t\t" + "老师" + "\t" + "学生" + "\t" + "金额";
+                        WriteMessage(fipath, firstline);
+                        WriteMessage(fipath, "------------------------------------------------------------------------");
+                        int sum = 0;
+                        foreach (AVObject item in myObject)
+                        {
+
+                            string msg = item.Get<String>("time") + "\t\t" + item.Get<String>("teacher") + "\t" + item.Get<String>("student") + "\t" + item.Get<String>("pay");
+
+                            WriteMessage(fipath, msg);
+                            sum = sum + Convert.ToInt16(item.Get<String>("pay"));
+
+                        }
+                        WriteMessage(fipath, "--------------------------------------------------------------------------------");
+                        WriteMessage(fipath, "总课时费：" + sum.ToString());
+                        WriteMessage(fipath, "老师工资：" + (sum/2).ToString());
+                        WriteMessage(fipath, "--------------------------------------------------------------------------------");
+                        WriteMessage(fipath, " ");
+                        WriteMessage(fipath, " ");
+                        WriteMessage(fipath, "老师签名：");
+                        /*
+                          Process pro = new Process();
+                          pro.StartInfo.FileName = fipath;//文件路径
+                          pro.StartInfo.CreateNoWindow = true;
+                          pro.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                          pro.StartInfo.Verb = "Print";
+                          pro.Start();
+                          */
+                    }
+                    catch (Exception ee)
+                    {
+                        MessageBox.Show("错误2：" + ee.Message);
+                    }
                 }
             }
             catch(Exception ee)
@@ -2241,48 +2305,7 @@ namespace CSharpDEMO
                 MessageBox.Show("错误："+ee.Message);
             }
             /************************************************** ***/
-            //string name = textBox_nameShow.Text;
-            //string telNum = textBox_telShow.Text;
-            try
-            {
-                string ym = DateTime.Now.ToString("yyyyMM");
-                //string month = DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss");
-                AVQuery<AVObject> query = new AVQuery<AVObject>("Payroll").WhereEqualTo("teacher", textBox_nameShow.Text).WhereEqualTo("month", ym);  //WhereEqualTo("tel",telNum).        
-                IEnumerable<AVObject> myObject = await query.FindAsync();
-                AVObject teacher = query.FirstAsync().Result;
-                string fipath = @"d:\Pay\Payroll" + ym + teacher.Get<string>("teacher") + ".txt";
-                WriteMessage(fipath, "\n\n");
-                string title = "姓名："  + "老师" + "\n" + "课程：" + "" + "\n";
-                WriteMessage(fipath, title);
-
-                string firstline = "时间" + "\t\t\t" + "老师" + "\t" + "学生" + "\t" + "金额";
-                WriteMessage(fipath, firstline);
-                int sum = 0;
-                foreach (AVObject item in myObject)
-                {
-
-                    string msg = item.Get<String>("time") + "\t\t" + item.Get<String>("teacher") + "\t" + item.Get<String>("student") + "\t" + item.Get<String>("pay");
-
-                    WriteMessage(fipath, msg);
-                    sum = sum + Convert.ToInt16(item.Get<String>("pay"));
-
-                }
-                sum = sum / 2;
-                //MessageBox.Show(sum.ToString());
-                WriteMessage(fipath, "总金额：" + sum.ToString());
-                /*
-                  Process pro = new Process();
-                  pro.StartInfo.FileName = fipath;//文件路径
-                  pro.StartInfo.CreateNoWindow = true;
-                  pro.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                  pro.StartInfo.Verb = "Print";
-                  pro.Start();
-                  */
-            }
-            catch(Exception ee)
-            {
-                MessageBox.Show("错误2："+ee.Message);
-            }
+            
         }
         /// <summary>
         /// 输出指定信息到文本文件
