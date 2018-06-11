@@ -255,7 +255,7 @@ namespace CSharpDEMO
                 return 0;
             }
 
-            string filename = path;// @"D:\生产产量纪录.xls";
+            string filename = path;// @"D:\生产产量纪录.xlsx";
             // open a workbook,if not exist, create a new one  
             Excel.Workbook workBook;
             if (File.Exists(filename))

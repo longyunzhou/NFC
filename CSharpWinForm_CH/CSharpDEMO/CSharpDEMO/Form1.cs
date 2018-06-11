@@ -22,6 +22,7 @@ namespace CSharpDEMO
     public partial class Form1 : Form
     {
         extend_Class s = new extend_Class();
+        string savepath = @"D:\";
         private static sq sql;
         //数值串转化为十六进制字符串
         private string  dataBasePath= "D:/data/test.db";
@@ -1072,8 +1073,8 @@ namespace CSharpDEMO
                             MessageBox.Show("Excel is not properly installed!");
                         }
 
-                        string excelPath = @"D:\学生注册.xls";
-                        string filename = excelPath;// @"D:\生产产量纪录.xls";
+                        string excelPath = @"D:\学生注册.xlsx";
+                        string filename = excelPath;// @"D:\生产产量纪录.xlsx";
                                                     // open a workbook,if not exist, create a new one  
                         Excel.Workbook workBook;
                         if (File.Exists(filename))
@@ -1212,6 +1213,21 @@ namespace CSharpDEMO
 
         private void read_btn_Click(object sender, EventArgs e)
         {
+            string str;
+            str = "hi";
+            Console.WriteLine(str);
+            DateTime dt1 = Convert.ToDateTime("2017-03-17 09:01:00.667");
+            string dt2s = DateTime.Now.ToString("yyy-MM-dd hh:mm:ss");
+            Console.WriteLine(dt2s);
+            DateTime dt2 = Convert.ToDateTime(dt2s);
+            //使用DateTime相减得到TimeSpan ts1 ts2
+
+            TimeSpan ts1 = dt2.Subtract(dt1).Duration();
+            //TimeSpan ts2 = dt3.Subtract(dt2).Duration();
+
+            string Days_1 = ts1.Minutes.ToString();
+            Console.WriteLine(Days_1);
+
             if (cardCheck())
                 textBox1.Text = readCard(0x00, 1).Substring(0,8);
             else
@@ -1414,8 +1430,8 @@ namespace CSharpDEMO
                             MessageBox.Show("Excel is not properly installed!");
                         }
 
-                        string excelPath = @"D:\老师注册.xls";
-                        string filename = excelPath;// @"D:\生产产量纪录.xls";
+                        string excelPath = @"D:\老师注册.xlsx";
+                        string filename = excelPath;// @"D:\生产产量纪录.xlsx";
                                                     // open a workbook,if not exist, create a new one  
                         Excel.Workbook workBook;
                         if (File.Exists(filename))
@@ -1612,8 +1628,8 @@ namespace CSharpDEMO
                             MessageBox.Show("Excel is not properly installed!");
                         }
 
-                        string excelPath = @"D:\课时流水.xls";
-                        string filename = excelPath;// @"D:\生产产量纪录.xls";
+                        string excelPath = @"D:\课时流水.xlsx";
+                        string filename = excelPath;// @"D:\生产产量纪录.xlsx";
                                                     // open a workbook,if not exist, create a new one  
                         Excel.Workbook workBook;
                         if (File.Exists(filename))
@@ -2059,8 +2075,8 @@ namespace CSharpDEMO
                             MessageBox.Show("Excel is not properly installed!");
                         }
 
-                        string excelPath = @"D:\老师工资流水.xls";
-                        string filename = excelPath;// @"D:\生产产量纪录.xls";
+                        string excelPath = @"D:\老师工资流水.xlsx";
+                        string filename = excelPath;// @"D:\生产产量纪录.xlsx";
                                                     // open a workbook,if not exist, create a new one  
                         Excel.Workbook workBook;
                         if (File.Exists(filename))
@@ -2348,102 +2364,236 @@ namespace CSharpDEMO
 
         }
 
-        private void button_registerExerciser_Click(object sender, EventArgs e)
+        async private void button_registerExerciser_Click(object sender, EventArgs e)
         {
-            try
+            string tel = textBox_exerciseTel.Text;
+            if (tel.Length!=11)
+            { MessageBox.Show("电话号码格式不对，请仔细核对！"); }
+            else
             {
-                int banlance = 0;
-                string name = textBox_exerciserName.Text;
-                string tel = textBox_exerciseTel.Text;
-                string regTime = DateTime.Now.ToString("yyyy-MM-dd");
-                string cardNum = readCard(0x00, 1).Substring(0, 8);
+                try
+                {
+                    int banlance = 0;
+                    string name = textBox_exerciserName.Text;
+                    string regTime = DateTime.Now.ToString("yyyy-MM-dd");
+                    string cardNum = "";
+                    try {
+                        cardNum = readCard(0x00, 1).Substring(0, 8);
+                    }
+                    catch (Exception ee) {
+                        MessageBox.Show(ee.Message);
+                        this.Close();
+                    }
 
-                AVObject exerciser = new AVObject("exerciser");
-                exerciser["Card_num"] = cardNum;
-                exerciser["name"] = name;
-                exerciser["tel"] = tel;
-                exerciser["balance"] = banlance.ToString();
-                exerciser.SaveAsync();
+                    AVObject exerciser = new AVObject("exerciser");
+                    exerciser["Card_num"] = cardNum;
+                    exerciser["name"] = name;
+                    exerciser["tel"] = tel;
+                    exerciser["balance"] = banlance.ToString();
+                    await exerciser.SaveAsync();
 
-                textBox_addMoney.Text = banlance.ToString();
-                textBox_balance.Text = banlance.ToString();
+                    textBox_addMoney.Text = banlance.ToString();
+                    textBox_balance.Text = banlance.ToString();
+                    writeCard(0x04, 1, s.KeyID2Card(exerciser.ObjectId));
+                    /********存储数据到本地sqlite**********************************/
 
-                while (exerciser.ObjectId == null)
-                { Thread.Sleep(100); }
-                writeCard(0x04, 1, s.KeyID2Card(exerciser.ObjectId));
-                // writeCard(0x02, 1, s.String2Unicode("学生"));
-                writeCard(0x05, 1, s.String2Unicode(name));
-                writeCard(0x06, 1, s.S2U(tel));
-                writeCard(0x10, 1, s.S2U(banlance.ToString()));
 
-                /********存储数据到本地sqlite**********************************/
-                sql = new sq("data source=" + dataBasePath);
-                //创建名为table1的数据表
-                sql.CreateTable("exerciser", new string[] { "regTime", "Card_num", "Name", "tel", "balance" },
-                                           new string[] { "TEXT", "TEXT", "TEXT", "TEXT", "INTEGER" });
-                //插入数据
-                sql.InsertValues("exerciser", new string[] { regTime, cardNum, name, tel, banlance.ToString() });
-                sql.CloseConnection();
+                    sql = new sq("data source=" + dataBasePath);
+                    //创建名为table1的数据表
+                    sql.CreateTable("exerciser", new string[] { "regTime", "Card_num", "Name", "tel", "balance" },
+                                               new string[] { "TEXT", "TEXT", "TEXT", "TEXT", "INTEGER" });
+                    //插入数据
+                    sql.InsertValues("exerciser", new string[] { regTime, cardNum, name, tel, banlance.ToString() });
+                    sql.CloseConnection();
 
-                /***********************************************************/
+                    //练琴卡存储到excel
+                    Excel.Application excelApp = new Excel.Application();
+                    if (excelApp == null)
+                    {
+                        // if equal null means EXCEL is not installed.  
+                        MessageBox.Show("Excel is not properly installed!");
+                    }
+
+                    string excelPath = savepath + "练习卡注册.xlsx";
+                    string filename = excelPath;// @"D:\生.xlsx";
+                                                // open a workbook,if not exist, create a new one  
+                    Excel.Workbook workBook;
+                    if (File.Exists(filename))
+                    {
+                        workBook = excelApp.Workbooks.Open(filename, 0, false, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+                    }
+                    else
+                    {
+                        workBook = excelApp.Workbooks.Add(true);
+                    }
+                    //new a worksheet  
+                    Excel.Worksheet workSheet = workBook.ActiveSheet as Excel.Worksheet;
+                    //write data
+                    workSheet = (Excel.Worksheet)workBook.Worksheets.get_Item(1);//获得第i个sheet，准备写入  
+                    workSheet.Cells[1, 1] = "注册时间";
+                    workSheet.Cells[1, 2] = "卡号";
+                    workSheet.Cells[1, 3] = "姓名";
+                    workSheet.Cells[1, 4] = "电话";
+                    workSheet.Cells[1, 5] = "余额";
+
+                    Microsoft.Office.Interop.Excel.Range range = workSheet.UsedRange;
+                    int colCount = range.Columns.Count;
+                    int rowCount = range.Rows.Count;
+                    string date_YMD = DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss");
+                    workSheet.Cells[rowCount + 1, 1] = date_YMD;
+                    workSheet.Cells[rowCount + 1, 2] = cardNum;
+                    workSheet.Cells[rowCount + 1, 3] = name;
+                    workSheet.Cells[rowCount + 1, 4] = tel;
+                    workSheet.Cells[rowCount + 1, 5] = "0";
+
+                    //set visible the Excel will run in background  
+                    excelApp.Visible = false;
+                    //set false the alerts will not display  
+                    excelApp.DisplayAlerts = false;
+                    workBook.SaveAs(filename);
+                    workBook.Close(false, Missing.Value, Missing.Value);
+                    //quit and clean up objects  
+                    excelApp.Quit();
+                    workSheet = null;
+                    workBook = null;
+                    excelApp = null;
+                    GC.Collect();
+                    /***********************************************************/
+
+
+                }
+                catch (Exception ee)
+                {
+                    MessageBox.Show("请重启机器");
+                    MessageBox.Show(ee.Message);
+                }
+                finally
+                {
+                    byte[] buffer = new byte[1];
+                    int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
+                }
             }
-            catch 
-            {
-                MessageBox.Show("请重启机器");
-            }
-            finally
-            {
-                byte[] buffer = new byte[1];
-                int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
-            }
-            
 
         }
 
-        private void button_addMoney_Click(object sender, EventArgs e)
+       async private void button_addMoney_Click(object sender, EventArgs e)
         {
-            textBox_exerciserName.Text = s.Unicode2String(readCard(0x05, 1));
-            textBox_exerciseTel.Text = s.U2S(readCard(0x06, 1));
-            string name = textBox_exerciserName.Text;
-            string tel = textBox_exerciseTel.Text;
-
-            AVQuery<AVObject> query = new AVQuery<AVObject>("exerciser").WhereEqualTo("name", textBox_exerciserName.Text).WhereEqualTo("tel", textBox_exerciseTel.Text);
-            //IEnumerable<AVObject> item = query.FindAsync();
-            int num = query.CountAsync().Result;
-            if (num==0)
+            string ObID = "";
+            try
             {
-                MessageBox.Show("没有该卡信息");
+                //获取信息
+                ObID = s.Card2KeyID(readCard(0x04, 1));
+                //MessageBox.Show(ObID);
             }
-            else
+            catch (Exception error)
             {
-                AVObject myObject = query.FirstAsync().Result;
-                while (myObject.ObjectId == null)                           //这一步很重要，等待获取结束
-                { Thread.Sleep(100); }
-                int moneyCard = Convert.ToInt16(s.U2S(readCard(0x20, 1)));
-                int moneyLeancloud = Convert.ToInt16(myObject.Get<string>("balance"));
-         
-                moneyLeancloud = moneyLeancloud + Convert.ToInt16(textBox_addMoney.Text);
-                moneyCard = moneyLeancloud;
-               
-                writeCard(0x10, 1, s.S2U(moneyLeancloud.ToString()));
-                myObject["balance"] = moneyLeancloud.ToString();                
-                myObject.SaveAsync();
+                MessageBox.Show("刷卡机需要重启，错误：" + error.Message);
+                this.Close();
+
+            }
+            try
+            {
+                AVQuery<AVObject> query = new AVQuery<AVObject>("exerciser").WhereEqualTo("objectId", ObID);
+                await query.FindAsync().ContinueWith(t => {
+                    IEnumerable<AVObject> persons = t.Result;
+                });
+
+                if (query.CountAsync().Result == 0)  //查到的数据为0个
+                {
+                    MessageBox.Show("没有查到该练习卡信息！");
+                }
+                else{
                 
-                textBox_balance.Text = moneyLeancloud.ToString();
-                byte[] buffer = new byte[1];
-                int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
+                    AVObject exerciser = query.FirstAsync().Result;
+                    textBox_exerciserName.Text = exerciser.Get<String>("name");
+                    textBox_exerciseTel.Text = exerciser.Get<String>("tel");
+                    string name = textBox_exerciserName.Text;
+                    string tel = textBox_exerciseTel.Text;
+                    string cardNum = exerciser.Get<String>("Card_num");
+                    int moneyLeancloud = Convert.ToInt16(exerciser.Get<string>("balance"));
+
+                    moneyLeancloud = moneyLeancloud + Convert.ToInt16(textBox_addMoney.Text);
 
 
-                /********更新本地数据库*************************************/
-                sql = new sq("data source= D:/data/test.db");
-                string updateCommand= "UPDATE "+ "exerciser "+ "SET " +"balance = \"" + moneyLeancloud.ToString()+ "\" WHERE NAME= \""+ name+"\" "+"AND "+"TEL= "+tel+";";
-                MessageBox.Show(updateCommand);
-                sql.ExecuteQuery(updateCommand);
-                sql.CloseConnection();
-                /***********************************************************/
+                    writeCard(0x10, 1, s.S2U(moneyLeancloud.ToString()));
+                    exerciser["balance"] = moneyLeancloud.ToString();
+                    await exerciser.SaveAsync();
+
+                    textBox_balance.Text = moneyLeancloud.ToString();
+                    byte[] buffer = new byte[1];
+                    int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
 
 
+                    /********更新本地数据库*************************************/
+                    sql = new sq("data source= D:/data/test.db");
+                    string updateCommand = "UPDATE " + "exerciser " + "SET " + "balance = \"" + moneyLeancloud.ToString() + "\" WHERE NAME= \"" + name + "\" " + "AND " + "TEL= " + tel + ";";
+                   // MessageBox.Show(updateCommand);
+                    sql.ExecuteQuery(updateCommand);
+                    sql.CloseConnection();
+                    /***********************************************************/
+                    //练琴卡存储到excel
+                    Excel.Application excelApp = new Excel.Application();
+                    if (excelApp == null)
+                    {
+                        // if equal null means EXCEL is not installed.  
+                        MessageBox.Show("Excel is not properly installed!");
+                    }
+
+                    string excelPath = savepath + "练习卡充值记录.xlsx";
+                    string filename = excelPath;// @"D:\生.xlsx";
+                                                // open a workbook,if not exist, create a new one  
+                    Excel.Workbook workBook;
+                    if (File.Exists(filename))
+                    {
+                        workBook = excelApp.Workbooks.Open(filename, 0, false, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+                    }
+                    else
+                    {
+                        workBook = excelApp.Workbooks.Add(true);
+                    }
+                    //new a worksheet  
+                    Excel.Worksheet workSheet = workBook.ActiveSheet as Excel.Worksheet;
+                    //write data
+                    workSheet = (Excel.Worksheet)workBook.Worksheets.get_Item(1);//获得第i个sheet，准备写入  
+                    workSheet.Cells[1, 1] = "充值时间";
+                    workSheet.Cells[1, 2] = "卡号";
+                    workSheet.Cells[1, 3] = "姓名";
+                    workSheet.Cells[1, 4] = "电话";
+                    workSheet.Cells[1, 5] = "充值金额";
+                    workSheet.Cells[1, 6] = "余额";
+
+                    Microsoft.Office.Interop.Excel.Range range = workSheet.UsedRange;
+                    int colCount = range.Columns.Count;
+                    int rowCount = range.Rows.Count;
+                    string date_YMD = DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss");
+                    workSheet.Cells[rowCount + 1, 1] = date_YMD;
+                    workSheet.Cells[rowCount + 1, 2] = cardNum;
+                    workSheet.Cells[rowCount + 1, 3] = name;
+                    workSheet.Cells[rowCount + 1, 4] = tel;
+                    workSheet.Cells[rowCount + 1, 5] = textBox_addMoney.Text;
+                    workSheet.Cells[rowCount + 1, 6] = moneyLeancloud.ToString();
+
+                    //set visible the Excel will run in background  
+                    excelApp.Visible = false;
+                    //set false the alerts will not display  
+                    excelApp.DisplayAlerts = false;
+                    workBook.SaveAs(filename);
+                    workBook.Close(false, Missing.Value, Missing.Value);
+                    //quit and clean up objects  
+                    excelApp.Quit();
+                    workSheet = null;
+                    workBook = null;
+                    excelApp = null;
+                    GC.Collect();
+                    /***********************************************************/
+                }                
             }
+            catch (Exception ee)
+            {
+                MessageBox.Show(ee.Message);
+            }
+
+
         }
 
         private void comboBox_exerciserCourse_SelectedIndexChanged(object sender, EventArgs e)
@@ -2462,28 +2612,80 @@ namespace CSharpDEMO
             }
         }
 
-        private void button2_Click_1(object sender, EventArgs e)
+        async private void button2_Click_1(object sender, EventArgs e)
         {
-            textBox_exerciserName.Text = s.Unicode2String(readCard(0x05, 1));
-            textBox_exerciseTel.Text = s.U2S(readCard(0x06, 1));
-            string name = textBox_exerciserName.Text;
-            string tel = textBox_exerciseTel.Text;
+            string ObID = "";
+            try
+            {
+                //获取信息
+                ObID = s.Card2KeyID(readCard(0x04, 1));
+                //MessageBox.Show(ObID);
+            }
+            catch (Exception error)
+            {
+                MessageBox.Show("刷卡机需要重启，错误：" + error.Message);
+                this.Close();
 
-            string enterTime= DateTime.Now.ToShortTimeString().ToString();
-            string enterHour= DateTime.Now.Hour.ToString();
-            string enterMinute= DateTime.Now.Minute.ToString();
-            string course = comboBox_exerciserCourse.Text;
-            string price = textBox_exercisePrice.Text;
-            textBox_startTime.Text = enterTime;
-            //textBox_endTime.Text= DateTime.Now.ToShortTimeString().ToString();
-            writeCard(0x02, 1, s.String2Unicode(course));//课程名
-            writeCard(0x04, 1, s.S2U(price));        //单价
-            writeCard(0x18, 1, s.S2U(enterTime)); //进入琴行，开始时间，写入卡
-            //分开存储方便计算
-            writeCard(0x1A, 1, s.S2U(enterHour)); //开始的小时  理论上用08 09 0A
-            writeCard(0x1C, 1, s.S2U(enterMinute)); //开始的分钟
-            byte[] buffer = new byte[1];
-            int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
+            }
+            try
+            {
+                AVQuery<AVObject> query = new AVQuery<AVObject>("exerciser").WhereEqualTo("objectId", ObID);
+                await query.FindAsync().ContinueWith(t =>
+                {
+                    IEnumerable<AVObject> persons = t.Result;
+                });
+
+                if (query.CountAsync().Result == 0)  //查到的数据为0个
+                {
+                    MessageBox.Show("没有查到该练习卡信息！");
+                }
+                else
+                {
+
+                    AVObject exerciser = query.FirstAsync().Result;
+                    textBox_exerciserName.Text = exerciser.Get<String>("name");
+                    textBox_exerciseTel.Text = exerciser.Get<String>("tel");
+                    string name = textBox_exerciserName.Text;
+                    string tel = textBox_exerciseTel.Text;
+                    string cardNum = exerciser.Get<String>("Card_num");
+                    string enterTime = DateTime.Now.ToShortTimeString().ToString();
+                    string enterHour = DateTime.Now.Hour.ToString();
+                    string enterMinute = DateTime.Now.Minute.ToString();
+                    string course = comboBox_exerciserCourse.Text;
+                    string price = textBox_exercisePrice.Text;
+
+                    int balance = Convert.ToInt16(exerciser.Get<string>("balance"));
+                    AVObject onrecord = new AVObject("exerciser");
+
+
+                    onrecord["Card_num"] = cardNum;
+                    onrecord["name"] = name;
+                    onrecord["tel"] = tel;
+                    onrecord["balance"] = balance.ToString();
+                    onrecord["courseName"] = course;
+                    onrecord["price"] = price;
+                    onrecord["enterTime"] = enterTime;                   
+
+                    await onrecord.SaveAsync();
+                    
+                    
+                    textBox_balance.Text = balance.ToString();
+                    textBox_startTime.Text = enterTime;
+                    //textBox_endTime.Text= DateTime.Now.ToShortTimeString().ToString();
+                    
+                    byte[] buffer = new byte[1];
+                    int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
+                }
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show(ee.Message);
+                
+
+            }
+                    
+
+            
         }
 
         private void button3_Click(object sender, EventArgs e)
