@@ -1066,6 +1066,7 @@ namespace CSharpDEMO
                         sql.InsertValues("student", new string[] { date_YMD, Card_num, name, tel, gender, birth, age, courseName, level, courseType, courseTime, courseTime, price.ToString(), sum_money.ToString(), stuTeacher });
                         sql.CloseConnection();
 
+                        /*********************************************/
                         Excel.Application excelApp = new Excel.Application();
                         if (excelApp == null)
                         {
@@ -2282,7 +2283,7 @@ namespace CSharpDEMO
                         string title3 = "分成比例：" + percent+"0%";
                         WriteMessage(fipath, title3);
                         WriteMessage(fipath, "------------------------------------------------------------------------");
-                        string firstline = "时间" + "\t\t\t" + "老师" + "\t" + "学生" + "\t" + "课程" + "\t" + "金额";
+                        string firstline = "时间" + "\t\t\t\t" + "老师" + "\t" + "学生" + "\t" + "课程" + "\t" + "金额";
                         WriteMessage(fipath, firstline);
                         WriteMessage(fipath, "------------------------------------------------------------------------");
                         int sum = 0;
@@ -2302,14 +2303,92 @@ namespace CSharpDEMO
                         WriteMessage(fipath, " ");
                         WriteMessage(fipath, " ");
                         WriteMessage(fipath, "老师签名：");
-                       
+
+                        /*********************************************/
+                        Excel.Application excelApp = new Excel.Application();
+                        if (excelApp == null)
+                        {
+                            // if equal null means EXCEL is not installed.  
+                            MessageBox.Show("Excel is not properly installed!");
+                        }
+
+                        string excelPath = @"D:\payroll.xlsx";
+                        string filename = excelPath;// @"D:\生产产量纪录.xlsx";
+                                                    // open a workbook,if not exist, create a new one  
+                        Excel.Workbook workBook;
+                        if (System.IO.File.Exists(excelPath))
+                        { // MessageBox.Show("exist");
+                            File.Delete(excelPath);
+                        }
+                        if (File.Exists(filename))
+                        {
+                            workBook = excelApp.Workbooks.Open(filename, 0, false, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+                        }
+                        else
+                        {
+                            workBook = excelApp.Workbooks.Add(true);
+                        }
+                        //new a worksheet  
+                        Excel.Worksheet workSheet = workBook.ActiveSheet as Excel.Worksheet;
+                        //write data
+                        workSheet = (Excel.Worksheet)workBook.Worksheets.get_Item(1);//获得第i个sheet，准备写入  
+                        workSheet.Cells[1, 1] = DateTime.Now.ToString("yyyy年MM月报表--老师版");
+                        workSheet.Cells[2, 1] = "教师姓名";
+                        workSheet.Cells[2, 2] = name;
+                        workSheet.Cells[3, 1] = "学生人数";
+                        workSheet.Cells[3, 2] = num.ToString();
+                        workSheet.Cells[4, 1] = "分成比例";
+                        workSheet.Cells[4, 2] = percent;
+                        workSheet.Cells[5, 1] = "时间";
+                        workSheet.Cells[5, 2] = "老师";
+                        workSheet.Cells[5, 3] = "学生";
+                        workSheet.Cells[5, 4] = "课程";
+                        workSheet.Cells[5, 5] = "金额";
+
+                        Microsoft.Office.Interop.Excel.Range range = workSheet.UsedRange;
+                        int colCount = range.Columns.Count;
+                        int rowCount = range.Rows.Count;
+                        foreach (AVObject item in myObject)
+                        {
+                            rowCount = rowCount + 1;
+                            workSheet.Cells[rowCount, 1] = item.Get<String>("time");
+                            workSheet.Cells[rowCount, 2] = item.Get<String>("teacher");
+                            workSheet.Cells[rowCount, 3] = item.Get<String>("student");
+                            workSheet.Cells[rowCount, 4] = item.Get<String>("courseName");
+                            workSheet.Cells[rowCount, 5] = item.Get<String>("pay");
+                            //string msg = item.Get<String>("time") + "\t\t" + item.Get<String>("teacher") + "\t" + item.Get<String>("student") + "\t" + item.Get<String>("courseName") + "\t" + item.Get<String>("pay");
+                        }
+                        rowCount = rowCount + 2;
+                        workSheet.Cells[rowCount + 1, 1] ="总课时费：";
+                        workSheet.Cells[rowCount + 1, 2] = sum.ToString();
+                        workSheet.Cells[rowCount + 2, 1] = "老师工资：";
+                        workSheet.Cells[rowCount + 2, 2] = (sum/2).ToString();
+                        workSheet.Cells[rowCount + 3, 1] = "老师签名:";
+                        //set visible the Excel will run in background  
+                        excelApp.Visible = false;
+                        //set false the alerts will not display  
+                        excelApp.DisplayAlerts = false;
+                        workBook.SaveAs(filename);
+                        workBook.Close(false, Missing.Value, Missing.Value);
+                        //quit and clean up objects  
+                        excelApp.Quit();
+                        workSheet = null;
+                        workBook = null;
+                        excelApp = null;
+                        GC.Collect();
                         Process pro = new Process();
                         pro.StartInfo.FileName = fipath;//文件路径
                         pro.StartInfo.CreateNoWindow = true;
                         pro.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                         pro.StartInfo.Verb = "Print";
                         pro.Start();
-                          
+                        Process pro2 = new Process();
+                        pro2.StartInfo.FileName = excelPath;//文件路径
+                        pro2.StartInfo.CreateNoWindow = true;
+                        pro2.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                        pro2.StartInfo.Verb = "Print";
+                        pro2.Start();
+
                     }
                     catch (Exception ee)
                     {

@@ -1321,6 +1321,7 @@
             this.read_btn.TabIndex = 21;
             this.read_btn.Text = "读卡_direct";
             this.read_btn.UseVisualStyleBackColor = true;
+            this.read_btn.Visible = false;
             this.read_btn.Click += new System.EventHandler(this.read_btn_Click);
             // 
             // write_btn
