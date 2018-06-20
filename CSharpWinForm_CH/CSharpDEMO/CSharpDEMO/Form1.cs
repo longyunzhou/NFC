@@ -1028,43 +1028,19 @@ namespace CSharpDEMO
                     this.Close();
                 }
 
-                // while (Student.ObjectId == null)
-                //{ Thread.Sleep(100); }
-                // MessageBox.Show(Student.ObjectId);
-                /********存储数据到卡中****************/
-                //writeCard(0x04, 1, s.KeyID2Card(Student.ObjectId));
-                // writeCard(0x02, 1, s.String2Unicode("学生"));
-                /*  删掉之后卡里只存身份和objectID*/
-                //writeCard(0x05, 1, s.String2Unicode(name));
-                //writeCard(0x06, 1, s.S2U(tel));   
-
-                //writeCard(0x08, 1, s.String2Unicode(gender));
-                //writeCard(0x09, 1, s.String2Unicode(birth));
-                //writeCard(0x0A, 1, s.S2U(age));       //剩余课时数
-                //writeCard(0x0C, 1, s.String2Unicode(courseName));
-                //writeCard(0x0D, 1, s.String2Unicode(level));
-                //writeCard(0x0E, 1, s.String2Unicode(courseType));
-                //writeCard(0x10, 1, s.S2U(date_YMD));                //注册时间
-                //writeCard(0x11, 1, s.S2U(courseTime));       //课时数
-                //writeCard(0x12, 1, s.S2U(price.ToString()));       //课时单价
-                //writeCard(0x14, 1, s.S2U(sum_money.ToString()));       //课时总价
-                //writeCard(0x15, 1, s.S2U(courseTime));       //剩余课时数
-                //writeCard(0x16, 1, s.String2Unicode(stuTeacher));       //学生的老师是谁
-                /*删除部分数据，卡里不再存储数据*/
-                /******************************************/
 
                 /********存储数据到本地sqlite**********************************/
                 if (step == 2)
                 {
                     try
                     {
-                        sql = new sq("data source= D:/data/test.db");
-                        //创建名为table1的数据表
-                        sql.CreateTable("student", new string[] { "regTime", "Card_num", "Name", "tel", "gender", "birth", "age", "coureseName", "level", "courseType", "courseTime", "courseTimeLeft", "price", "sum_money", "stuTeacher" },
-                                                    new string[] { "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "INTEGER", "TEXT", "TEXT", "TEXT", "INTEGER", "INTEGER", "INTEGER", "INTEGER", "TEXT" });
-                        //插入数据
-                        sql.InsertValues("student", new string[] { date_YMD, Card_num, name, tel, gender, birth, age, courseName, level, courseType, courseTime, courseTime, price.ToString(), sum_money.ToString(), stuTeacher });
-                        sql.CloseConnection();
+                        //sql = new sq("data source= D:/data/test.db");
+                        ////创建名为table1的数据表
+                        //sql.CreateTable("student", new string[] { "regTime", "Card_num", "Name", "tel", "gender", "birth", "age", "coureseName", "level", "courseType", "courseTime", "courseTimeLeft", "price", "sum_money", "stuTeacher" },
+                        //                            new string[] { "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "INTEGER", "TEXT", "TEXT", "TEXT", "INTEGER", "INTEGER", "INTEGER", "INTEGER", "TEXT" });
+                        ////插入数据
+                        //sql.InsertValues("student", new string[] { date_YMD, Card_num, name, tel, gender, birth, age, courseName, level, courseType, courseTime, courseTime, price.ToString(), sum_money.ToString(), stuTeacher });
+                        //sql.CloseConnection();
 
                         /*********************************************/
                         Excel.Application excelApp = new Excel.Application();
@@ -1167,7 +1143,8 @@ namespace CSharpDEMO
         comboBox_gender.SelectedIndex = comboBox_gender.Items.IndexOf("男");
           //comboBox_courseType.SelectedIndex= comboBox_gender.Items.IndexOf("一对一");
           AVClient.Initialize("uwQ2g76bvCIMHAOUrdC08Lpn-gzGzoHsz", "ioIOpV4kQ6Cw0f3Eu97348qp");
-         
+          //  AVClient.Initialize("OJQvXqlYqaFmnq4WXUE9v5Yr-gzGzoHsz", "eQ4Y1AIiACgGv7dK8fzAWIM7");
+
 
         }
 
@@ -1392,38 +1369,20 @@ namespace CSharpDEMO
                     this.Close();
                 }
 
-                /*
-                 while (Teacher.ObjectId == null)
-                 { Thread.Sleep(100); }
-               */
-
-
-                /**********卡里只存ObjectID和身份**************************/
-                //writeCard(0x05, 1, s.String2Unicode(name));
-                //writeCard(0x06, 1, s.S2U(tel));
-
-                //writeCard(0x08, 1, s.String2Unicode(gender));
-                //writeCard(0x09, 1, s.String2Unicode(birth));
-                //writeCard(0x0A, 1, s.S2U(age));       //老师年龄
-                //writeCard(0x0C, 1, s.String2Unicode(courseName));
-
-                //writeCard(0x10, 1, s.S2U(date_YMD));       //注册时间
-                //writeCard(0x20, 1, s.S2U(wage.ToString()));       //本月工资
-                //writeCard(0x18, 1, s.S2U(percent.ToString()));       //工资比例
-                /***********************************************/
+               
 
                 /********存储数据到本地sqlite**********************************/
                 if (step == 2)
                 {
                     try
                     {
-                        sql = new sq("data source= D:/data/test.db");
-                        //创建名为table1的数据表
-                        sql.CreateTable("teacher", new string[] { "regTime", "Card_num", "Name", "tel", "gender", "birth", "age", "coureseName ", "percent", "wage" },
-                                                   new string[] { "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "INTEGER", "TEXT", "INTEGER", "INTEGER" });
-                        //插入数据
-                        sql.InsertValues("teacher", new string[] { date_YMD, Card_num, name, tel, gender, birth, age, courseName, percent, "0" });
-                        sql.CloseConnection();
+                        //sql = new sq("data source= D:/data/test.db");
+                        ////创建名为table1的数据表
+                        //sql.CreateTable("teacher", new string[] { "regTime", "Card_num", "Name", "tel", "gender", "birth", "age", "coureseName ", "percent", "wage" },
+                        //                           new string[] { "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "INTEGER", "TEXT", "INTEGER", "INTEGER" });
+                        ////插入数据
+                        //sql.InsertValues("teacher", new string[] { date_YMD, Card_num, name, tel, gender, birth, age, courseName, percent, "0" });
+                        //sql.CloseConnection();
                         Excel.Application excelApp = new Excel.Application();
                         if (excelApp == null)
                         {
@@ -1539,7 +1498,6 @@ namespace CSharpDEMO
             {
                 MessageBox.Show("刷卡机需要重启，错误："+ error.Message);
                 this.Close();
-
             }
 
             AVQuery<AVObject> query = new AVQuery<AVObject>("Student").WhereEqualTo("objectId", ObID);            
@@ -1609,17 +1567,17 @@ namespace CSharpDEMO
                     /*****存储数据到本地***************/
                     try
                     {
-                        sql = new sq("data source= D:/data/test.db");
-                        //创建名为payroll的数据表
-                        sql.CreateTable("payroll", new string[] { "time", "month", "student", "teacher", "pay","courseName" },
-                                                    new string[] { "TEXT", "TEXT", "TEXT", "TEXT", "INTEGER","TEXT"});
-                        //插入数据
-                        sql.InsertValues("payroll", new string[] { DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss"), DateTime.Now.ToString("yyyyMM"), name,stuTeacher, coursePrice,courseName });
-                        //need update data here
+                        //sql = new sq("data source= D:/data/test.db");
+                        ////创建名为payroll的数据表
+                        //sql.CreateTable("payroll", new string[] { "time", "month", "student", "teacher", "pay", "courseName" },
+                        //                            new string[] { "TEXT", "TEXT", "TEXT", "TEXT", "INTEGER", "TEXT" });
+                        ////插入数据
+                        //sql.InsertValues("payroll", new string[] { DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss"), DateTime.Now.ToString("yyyyMM"), name, stuTeacher, coursePrice, courseName });
+                        ////need update data here
 
-                        //关闭数据库
-                        sql.CloseConnection();
-                        
+                        ////关闭数据库
+                        //sql.CloseConnection();
+
 
                         //存储到excel
                         Excel.Application excelApp = new Excel.Application();
@@ -2059,14 +2017,14 @@ namespace CSharpDEMO
                         Task saveTask = wage.SaveAsync();
                         await saveTask;
 
-                        /********存储到sqlite*****************************************/
-                        sql = new sq("data source= D:/data/test.db");
-                        //创建名为table1的数据表
-                        sql.CreateTable("Wage", new string[] { "month", "Teacher", "money"},
-                                                    new string[] { "TEXT", "TEXT", "INTEGER"});
-                        //插入数据
-                        sql.InsertValues("Wage", new string[] { month, name, sum.ToString() });
-                        sql.CloseConnection();
+                        ///********存储到sqlite*****************************************/
+                        //sql = new sq("data source= D:/data/test.db");
+                        ////创建名为table1的数据表
+                        //sql.CreateTable("Wage", new string[] { "month", "Teacher", "money"},
+                        //                            new string[] { "TEXT", "TEXT", "INTEGER"});
+                        ////插入数据
+                        //sql.InsertValues("Wage", new string[] { month, name, sum.ToString() });
+                        //sql.CloseConnection();
 
                         /********存储到excel*****************************************/
                         Excel.Application excelApp = new Excel.Application();
@@ -2262,7 +2220,7 @@ namespace CSharpDEMO
                         AVQuery<AVObject> query = new AVQuery<AVObject>("Payroll").WhereEqualTo("teacher", textBox_nameShow.Text).WhereEqualTo("month", ym);  //WhereEqualTo("tel",telNum).        
                         IEnumerable<AVObject> myObject = await query.FindAsync();
                         AVObject teacher = query.FirstAsync().Result;
-                        string fipath = @"d:\Pay\Payroll" + ym + teacher.Get<string>("teacher") + ".txt";
+                        string fipath = @"d:\P" + ym + teacher.Get<string>("teacher") + ".txt";
 
                         /**************获取个数****/
                         int num = 0;
@@ -2438,9 +2396,186 @@ namespace CSharpDEMO
             }
         }
 
-        private void button_courseAdd_Click(object sender, EventArgs e)
+        async private void button_courseAdd_Click(object sender, EventArgs e)
         {
+            int addNum = Convert.ToInt16(textBox_courseAddName.Text);
+            int addprice = Convert.ToInt16(textBox_priceAdd.Text);
+            string ObID = "";
+            try
+            {
+                //获取信息
+                ObID = s.Card2KeyID(readCard(0x04, 1));
+                //MessageBox.Show(ObID);
+            }
+            catch (Exception error)
+            {
+                MessageBox.Show("刷卡机需要重启，错误：" + error.Message);
+                this.Close();
+            }
 
+            AVQuery<AVObject> query = new AVQuery<AVObject>("Student").WhereEqualTo("objectId", ObID);
+            await query.FindAsync().ContinueWith(t =>
+            {
+                IEnumerable<AVObject> persons = t.Result;
+                //sum = 0;
+                int sum = persons.Count();
+
+            });
+
+            if (query.CountAsync().Result == 0)  //查到的数据为0个
+            { MessageBox.Show("没有查到相关学生信息！"); }
+            else
+            {
+                AVObject myObject = query.FirstAsync().Result;
+                /*************************************************************************/
+                //read data from leancloud
+                string Card_num = readCard(0x00, 1).Substring(0, 8);
+                string name = myObject.Get<String>("name");
+                string tel = myObject.Get<String>("tel");
+                string gender = myObject.Get<String>("gender");
+                string birth = myObject.Get<String>("birth");
+                string courseName = myObject.Get<String>("courseName");
+                string level = myObject.Get<String>("level");
+                string courseType = myObject.Get<String>("courseType");
+                string courseTime = myObject.Get<String>("courseTime");   //总课时数
+                string courseTimeLeft = myObject.Get<String>("courseTimeLeft");   //剩余课时数
+                string stuTeacher = myObject.Get<String>("stuTeacher");
+                textBox_courseAdd.Text = courseName;
+
+                // Console.WriteLine("1");
+                string objectID = myObject.ObjectId;
+                // Console.WriteLine("2");
+                int times = Convert.ToInt16(courseTimeLeft);
+                //  Console.WriteLine("3");
+                int sumTimes = Convert.ToInt16(courseTime);
+                //  Console.WriteLine("4");
+                await myObject.SaveAsync().ContinueWith(t=>
+                {
+                    
+                    myObject["courseTimeLeft"] = (times + addNum).ToString();
+                    Console.WriteLine("1");
+                    myObject["courseTime"] = (sumTimes + addNum).ToString();
+                    Console.WriteLine("2");
+                    myObject.SaveAsync();
+                    Console.WriteLine("3");
+                }
+                );
+               
+                string sumAddMoney=((times + addNum) * addprice).ToString();
+                textBoxAddMoney.Text = sumAddMoney;
+
+
+                MessageBox.Show("充值成功！\n"+"学生："+name+"\n充值："+ addNum.ToString()+"课时\n"+ courseName);
+
+                AVObject addCourse = new AVObject("addCourseRecord");
+                addCourse["time"] = DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss");
+                addCourse["month"] = DateTime.Now.ToString("yyyyMM");
+                addCourse["student"] = myObject.Get<String>("name");
+                addCourse["teacher"] = stuTeacher;
+                addCourse["price"] = textBox_priceAdd.Text;
+                addCourse["courseName"] = courseName;
+                addCourse["courseAddNum"] = addNum.ToString();
+                addCourse["sumMoney"] = sumAddMoney;
+                await addCourse.SaveAsync();
+                //textBox_nameShow.Text = name;
+                //textBox_shenfen.Text = "学生";
+                //textBox4_courseNameShow.Text = courseName;
+                //textBoxCourseTypeShow.Text = courseType;
+                //textBox_telShow.Text = tel;
+                //textBox_courseTime_left.Text = (times - 1).ToString();
+                //textBox_courseTimeSum.Text = courseTime;
+                //textBox_teacherShow.Text = myObject.Get<String>("stuTeacher");
+                //string stuTeacher = textBox_teacherShow.Text;
+
+                byte[] buffer = new byte[1];
+                int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
+                int nRet_led = Reader.ControlLED(20, 3, buffer);
+                    
+               
+
+                /*****存储数据到本地***************/
+                try
+                {
+                    //sql = new sq("data source= D:/data/test.db");
+                    ////创建名为payroll的数据表
+                    //sql.CreateTable("payroll", new string[] { "time", "month", "student", "teacher", "pay", "courseName" },
+                    //                            new string[] { "TEXT", "TEXT", "TEXT", "TEXT", "INTEGER", "TEXT" });
+                    ////插入数据
+                    //sql.InsertValues("payroll", new string[] { DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss"), DateTime.Now.ToString("yyyyMM"), name, stuTeacher, coursePrice, courseName });
+                    ////need update data here
+
+                    ////关闭数据库
+                    //sql.CloseConnection();
+
+
+                    //存储到excel
+                    Excel.Application excelApp = new Excel.Application();
+                    if (excelApp == null)
+                    {
+                        // if equal null means EXCEL is not installed.  
+                        MessageBox.Show("Excel is not properly installed!");
+                    }
+
+                    string excelPath = @"D:\课时充值记录.xlsx";
+                    string filename = excelPath;// @"D:\生产产量纪录.xlsx";
+                                                // open a workbook,if not exist, create a new one  
+                    Excel.Workbook workBook;
+                    if (File.Exists(filename))
+                    {
+                        workBook = excelApp.Workbooks.Open(filename, 0, false, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+                    }
+                    else
+                    {
+                        workBook = excelApp.Workbooks.Add(true);
+                    }
+                    //new a worksheet  
+                    Excel.Worksheet workSheet = workBook.ActiveSheet as Excel.Worksheet;
+                    //write data
+                    workSheet = (Excel.Worksheet)workBook.Worksheets.get_Item(1);//获得第i个sheet，准备写入  
+                    workSheet.Cells[1, 1] = "充值时间";
+                    workSheet.Cells[1, 2] = "月份";
+                    workSheet.Cells[1, 3] = "学生姓名";
+                    workSheet.Cells[1, 4] = "老师姓名";
+                    workSheet.Cells[1, 5] = "课程价格";
+                    workSheet.Cells[1, 6] = "充值课程数目";
+                    workSheet.Cells[1, 7] = "课程";
+                    workSheet.Cells[1, 8] = "课程余额";
+
+
+                    Microsoft.Office.Interop.Excel.Range range = workSheet.UsedRange;
+
+                    int colCount = range.Columns.Count;
+                    int rowCount = range.Rows.Count;
+
+                    workSheet.Cells[rowCount + 1, 1] = DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss");
+                    workSheet.Cells[rowCount + 1, 2] = DateTime.Now.ToString("yyyyMM");
+                    workSheet.Cells[rowCount + 1, 3] = name;
+                    workSheet.Cells[rowCount + 1, 4] = stuTeacher;
+                    workSheet.Cells[rowCount + 1, 5] = textBox_priceAdd.Text;
+                    workSheet.Cells[rowCount + 1, 6] = textBox_courseAddName.Text;
+                    workSheet.Cells[rowCount + 1, 7] = courseName;
+                    workSheet.Cells[rowCount + 1, 8] = (times + addNum).ToString();
+                    //set visible the Excel will run in background  
+                    excelApp.Visible = false;
+                    //set false the alerts will not display  
+                    excelApp.DisplayAlerts = false;
+                    workBook.SaveAs(filename);
+                    workBook.Close(false, Missing.Value, Missing.Value);
+                    //quit and clean up objects  
+                    excelApp.Quit();
+                    workSheet = null;
+                    workBook = null;
+                    excelApp = null;
+                    GC.Collect();
+
+                }
+                catch (Exception erro)
+                {
+                    MessageBox.Show("本地数据存储错误" + erro.Message);
+                    this.Close();
+                }
+                
+            }
         }
 
         async private void button_registerExerciser_Click(object sender, EventArgs e)
@@ -2730,7 +2865,7 @@ namespace CSharpDEMO
                     string price = textBox_exercisePrice.Text;
 
                     int balance = Convert.ToInt16(exerciser.Get<string>("balance"));
-                    AVObject onrecord = new AVObject("onrecord");
+                    AVObject onrecord = new AVObject("exerciserRecord");
                     
                     onrecord["Card_num"] = cardNum;
                     onrecord["name"] = name;
@@ -2753,8 +2888,7 @@ namespace CSharpDEMO
             }
             catch (Exception ee)
             {
-                MessageBox.Show(ee.Message);               
-
+                MessageBox.Show(ee.Message);          
             }
                     
 
@@ -2780,7 +2914,7 @@ namespace CSharpDEMO
             }
             try
             {
-                AVQuery<AVObject> queryRecord = new AVQuery<AVObject>("onrecord").WhereEqualTo("objectId", ObIDrecord);
+                AVQuery<AVObject> queryRecord = new AVQuery<AVObject>("exerciserRecord").WhereEqualTo("objectId", ObIDrecord);
                 AVQuery<AVObject> queryExerciser = new AVQuery<AVObject>("exerciser").WhereEqualTo("objectId", ObIDcard);
                 await queryRecord.FindAsync().ContinueWith(t =>{IEnumerable<AVObject> persons = t.Result;});
                 await queryExerciser.FindAsync().ContinueWith(t => { IEnumerable<AVObject> persons = t.Result; });
@@ -2878,7 +3012,7 @@ namespace CSharpDEMO
                         workSheet.Cells[1, 6] = "离开时间";
                         workSheet.Cells[1, 7] = "练习项目";
                         workSheet.Cells[1, 8] = "单价";
-                        workSheet.Cells[1, 9] = "时常";
+                        workSheet.Cells[1, 9] = "时长";
                         workSheet.Cells[1, 10] = "消费";
 
 
@@ -2910,7 +3044,7 @@ namespace CSharpDEMO
                         excelApp = null;
                         GC.Collect();
                         /***********************************************************/
-
+                        MessageBox.Show("开始时间：" + enterTime+ "\n" +"结束时间："+endtime+"\n"+"费用："+ cost.ToString()+"\n"+"余额："+ balance);
                         /***********************************************************/
                         byte[] buffer = new byte[1];
                         int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）

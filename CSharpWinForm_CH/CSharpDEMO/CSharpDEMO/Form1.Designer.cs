@@ -266,9 +266,14 @@
             this.button_enterTime = new System.Windows.Forms.Button();
             this.button_addMoney = new System.Windows.Forms.Button();
             this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.textBox_courseAddDel = new System.Windows.Forms.TextBox();
+            this.textBoxAddMoney = new System.Windows.Forms.TextBox();
+            this.textBox_priceAdd = new System.Windows.Forms.TextBox();
+            this.textBox_courseAddName = new System.Windows.Forms.TextBox();
+            this.textBox_courseAdd = new System.Windows.Forms.TextBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
             this.label_course_addDel = new System.Windows.Forms.Label();
-            this.button_courseDelete = new System.Windows.Forms.Button();
             this.button_courseAdd = new System.Windows.Forms.Button();
             this.label_Qinhang = new System.Windows.Forms.Label();
             this.button_savePayroll = new System.Windows.Forms.Button();
@@ -2553,24 +2558,79 @@
             // 
             // tabPage5
             // 
-            this.tabPage5.Controls.Add(this.textBox_courseAddDel);
+            this.tabPage5.Controls.Add(this.textBoxAddMoney);
+            this.tabPage5.Controls.Add(this.textBox_priceAdd);
+            this.tabPage5.Controls.Add(this.textBox_courseAddName);
+            this.tabPage5.Controls.Add(this.textBox_courseAdd);
+            this.tabPage5.Controls.Add(this.label14);
+            this.tabPage5.Controls.Add(this.label13);
+            this.tabPage5.Controls.Add(this.label12);
             this.tabPage5.Controls.Add(this.label_course_addDel);
-            this.tabPage5.Controls.Add(this.button_courseDelete);
             this.tabPage5.Controls.Add(this.button_courseAdd);
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage5.Size = new System.Drawing.Size(312, 553);
             this.tabPage5.TabIndex = 4;
-            this.tabPage5.Text = "充值";
+            this.tabPage5.Text = "课程充值";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
-            // textBox_courseAddDel
+            // textBoxAddMoney
             // 
-            this.textBox_courseAddDel.Location = new System.Drawing.Point(150, 148);
-            this.textBox_courseAddDel.Name = "textBox_courseAddDel";
-            this.textBox_courseAddDel.Size = new System.Drawing.Size(74, 21);
-            this.textBox_courseAddDel.TabIndex = 3;
+            this.textBoxAddMoney.Location = new System.Drawing.Point(150, 231);
+            this.textBoxAddMoney.Name = "textBoxAddMoney";
+            this.textBoxAddMoney.ReadOnly = true;
+            this.textBoxAddMoney.Size = new System.Drawing.Size(74, 21);
+            this.textBoxAddMoney.TabIndex = 3;
+            // 
+            // textBox_priceAdd
+            // 
+            this.textBox_priceAdd.Location = new System.Drawing.Point(150, 203);
+            this.textBox_priceAdd.Name = "textBox_priceAdd";
+            this.textBox_priceAdd.Size = new System.Drawing.Size(74, 21);
+            this.textBox_priceAdd.TabIndex = 3;
+            // 
+            // textBox_courseAddName
+            // 
+            this.textBox_courseAddName.Location = new System.Drawing.Point(150, 174);
+            this.textBox_courseAddName.Name = "textBox_courseAddName";
+            this.textBox_courseAddName.Size = new System.Drawing.Size(74, 21);
+            this.textBox_courseAddName.TabIndex = 3;
+            // 
+            // textBox_courseAdd
+            // 
+            this.textBox_courseAdd.Location = new System.Drawing.Point(150, 148);
+            this.textBox_courseAdd.Name = "textBox_courseAdd";
+            this.textBox_courseAdd.ReadOnly = true;
+            this.textBox_courseAdd.Size = new System.Drawing.Size(74, 21);
+            this.textBox_courseAdd.TabIndex = 3;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(74, 234);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(41, 12);
+            this.label14.TabIndex = 2;
+            this.label14.Text = "总价：";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(74, 206);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(41, 12);
+            this.label13.TabIndex = 2;
+            this.label13.Text = "单价：";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(74, 177);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(53, 12);
+            this.label12.TabIndex = 2;
+            this.label12.Text = "课时数：";
             // 
             // label_course_addDel
             // 
@@ -2581,22 +2641,13 @@
             this.label_course_addDel.TabIndex = 2;
             this.label_course_addDel.Text = "课程名称：";
             // 
-            // button_courseDelete
-            // 
-            this.button_courseDelete.Location = new System.Drawing.Point(165, 222);
-            this.button_courseDelete.Name = "button_courseDelete";
-            this.button_courseDelete.Size = new System.Drawing.Size(75, 23);
-            this.button_courseDelete.TabIndex = 1;
-            this.button_courseDelete.Text = "删除课程";
-            this.button_courseDelete.UseVisualStyleBackColor = true;
-            // 
             // button_courseAdd
             // 
-            this.button_courseAdd.Location = new System.Drawing.Point(59, 222);
+            this.button_courseAdd.Location = new System.Drawing.Point(113, 273);
             this.button_courseAdd.Name = "button_courseAdd";
             this.button_courseAdd.Size = new System.Drawing.Size(80, 22);
             this.button_courseAdd.TabIndex = 0;
-            this.button_courseAdd.Text = "添加课程";
+            this.button_courseAdd.Text = "课程充值";
             this.button_courseAdd.UseVisualStyleBackColor = true;
             this.button_courseAdd.Click += new System.EventHandler(this.button_courseAdd_Click);
             // 
@@ -2905,9 +2956,8 @@
         private System.Windows.Forms.Button button_enterTime;
         private System.Windows.Forms.Button button_addMoney;
         private System.Windows.Forms.Button button_courseAdd;
-        private System.Windows.Forms.TextBox textBox_courseAddDel;
+        private System.Windows.Forms.TextBox textBox_courseAdd;
         private System.Windows.Forms.Label label_course_addDel;
-        private System.Windows.Forms.Button button_courseDelete;
         private System.Windows.Forms.Label label_sumTime;
         private System.Windows.Forms.TextBox textBox_sumTime;
         private System.Windows.Forms.Label label_cost;
@@ -2923,6 +2973,12 @@
         private System.Windows.Forms.TextBox textBox_percent;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label_hour;
+        private System.Windows.Forms.TextBox textBox_priceAdd;
+        private System.Windows.Forms.TextBox textBox_courseAddName;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox textBoxAddMoney;
+        private System.Windows.Forms.Label label14;
     }
 }
 
