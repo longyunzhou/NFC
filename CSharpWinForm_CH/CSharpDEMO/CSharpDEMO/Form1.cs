@@ -943,29 +943,50 @@ namespace CSharpDEMO
 
        async private void button_register_Click(object sender, EventArgs e)
         {
+            string is_reg = "";
+            try
+            {
+                is_reg = readCard(0x19, 1);
+                
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show("读卡失败，error:" + err.Message);
+            }
+
             int step = 0;
             string tel = textBox_tel.Text;
-            if (tel.Length != 11)
-            { MessageBox.Show("电话号码格式不正确");MessageBox.Show("号码长度为："+tel.Length.ToString()); }
+
+            if (s.Unicode2String(is_reg) == "卡不存在")
+            { MessageBox.Show("请先放上卡再进行操作"); }
+            else if (tel.Length != 11)
+            { MessageBox.Show("电话号码格式不正确"); MessageBox.Show("号码长度为：" + tel.Length.ToString()); }
+            else if (is_reg == "used by student")
+            {
+                MessageBox.Show("该卡已经被注册，请换一张卡！" + s.U2S(is_reg));
+            }
             else
             {
                 step = 1;
-                try {/*防止读写过程中出错*/
+                try
+                {/*防止读写过程中出错*/
                     textBox_cardNum.Text = readCard(0x00, 1).Substring(0, 8);
+                    string shenfen = s.Unicode2String(readCard(0x30, 1));
                     writeCard(0x02, 1, s.String2Unicode("学生"));
                 }
-                catch (Exception ee) {
+                catch (Exception ee)
+                {
                     MessageBox.Show(ee.Message);
                     this.Close();
                 }
                 finally { }
-               
+
 
                 //write data to leancloud
 
                 string Card_num = textBox_cardNum.Text;
                 string name = textBox_name.Text;
-                
+
                 string gender = comboBox_gender.Text;
                 string birth = comboBox_month.Text + comboBox_date.Text;
                 string courseName = comboBox_courseName.Text;
@@ -991,11 +1012,11 @@ namespace CSharpDEMO
                         int sum = persons.Count();
                     });
                     int num = query.CountAsync().Result;
-                   // MessageBox.Show(num.ToString());
+                    // MessageBox.Show(num.ToString());
                     if (num > 0)  //查到的数据为0个
                     {
                         MessageBox.Show("已经有注册信息，请删除后重新注册");
-                        
+
                     }
                     else
                     {
@@ -1016,15 +1037,17 @@ namespace CSharpDEMO
                         Student["sum_money"] = sum_money.ToString();          //总费用
                         Student["stuTeacher"] = stuTeacher;          //学生的老师
 
-                        
+
                         Student["regTime"] = date_YMD;
                         await Student.SaveAsync();
                         writeCard(0x04, 1, s.KeyID2Card(Student.ObjectId));
                         writeCard(0x02, 1, s.String2Unicode("学生"));
+                        writeCard(0x19, 1, s.S2U("used by student"));
                     }
                 }
-                catch(Exception erro){
-                    MessageBox.Show("网络错误"+erro.Message);
+                catch (Exception erro)
+                {
+                    MessageBox.Show("网络错误" + erro.Message);
                     this.Close();
                 }
 
@@ -1131,8 +1154,8 @@ namespace CSharpDEMO
                 }
                 else
                 { }
-             
-               
+
+
             }
         }
       
@@ -1191,29 +1214,22 @@ namespace CSharpDEMO
 
         private void read_btn_Click(object sender, EventArgs e)
         {
-            string str;
-            str = "hi";
-            Console.WriteLine(str);
-            DateTime dt1 = Convert.ToDateTime("2018-06-11 22:59:00.667");
-            string dt2s = DateTime.Now.ToString("yyy-MM-dd HH:mm:ss");
-            Console.WriteLine(dt2s);
-            DateTime dt2 = Convert.ToDateTime(dt2s);
-            //使用DateTime相减得到TimeSpan ts1 ts2
-
-            TimeSpan ts1 = dt2.Subtract(dt1).Duration();
-            //TimeSpan ts2 = dt3.Subtract(dt2).Duration();
-
-            string Days_1 = ts1.TotalMinutes.ToString();
-            Console.WriteLine(Days_1);
-
-            if (cardCheck())
-                textBox1.Text = readCard(0x00, 1).Substring(0,8);
-            else
-                textBox1.Text = "no card";
+            string is_reg = "";
+            try
+            {
+                is_reg = readCard(0x1D, 1);
+                MessageBox.Show("读卡成功"+is_reg);
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show("读卡失败，error:" + err.Message);
+            }
+            
         }
         private void write_btn_Click(object sender, EventArgs e)
         {
-            writeCard(0x10,1,"11 22 33 44 55 66 77 88 99 00 aa bb cc dd ab cd");
+            //writeCard(0x10,1,"11 22 33 44 55 66 77 88 99 00 aa bb cc dd ab cd");
+            writeCard(0x1A, 1, s.S2U("used"));
         }
         private void writeCard(byte blk_add, byte num_blk,string text)
         {
@@ -1236,7 +1252,7 @@ namespace CSharpDEMO
             if (nRet != 0)
             {
                 MessageBox.Show("数据传输出错，需要重启机器！");
-                this.Close();
+                //this.Close();
             }
             /*
             else
@@ -1294,11 +1310,27 @@ namespace CSharpDEMO
 
        async private void button_register_teacher_Click(object sender, EventArgs e)
         {
+            string is_reg = "";
+            try
+            {
+                is_reg = readCard(0x19, 1);
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show("读卡失败，error:" + err.Message);
+            }
+
             int step = 0;
             textBox_teacherCard.Text = readCard(0x00, 1).Substring(0, 8);
             string tel = textBox_teacherTel.Text;
-            if (tel.Length != 11)
+            if (s.Unicode2String(is_reg) == "卡不存在")
+            { MessageBox.Show("请先放上卡再进行操作"); }
+            else if(tel.Length != 11)
             { MessageBox.Show("电话号码格式不正确"); MessageBox.Show("号码长度为："+tel.Length.ToString()); }
+            else if (is_reg != "00000000000000000000000000000000")
+            {
+                MessageBox.Show("该卡已经被注册，请换一张卡！" + s.U2S(is_reg));
+            }
             else
             {
                 step = 1;//tel is OK!
@@ -1361,6 +1393,7 @@ namespace CSharpDEMO
                         await saveTask;
                         writeCard(0x04, 1, s.KeyID2Card(Teacher.ObjectId));
                         writeCard(0x02, 1, s.String2Unicode("老师"));
+                        writeCard(0x19, 1, s.S2U("used by teacher"));
                     }
                 }
                 catch (Exception erro)
@@ -1651,9 +1684,23 @@ namespace CSharpDEMO
 
       async private void button2_Click(object sender, EventArgs e)
         {
-       
 
-            if (radioButton_teacher.Checked)
+            string is_reg = "";
+            try
+            {
+                is_reg = readCard(0x19, 1);
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show("读卡失败，error:" + err.Message);
+            }
+            if (s.Unicode2String(is_reg) == "卡不存在")
+            { MessageBox.Show("请先放上卡再进行操作"); }
+            else if (is_reg != "00000000000000000000000000000000" && is_reg !="")
+            {
+                MessageBox.Show("该卡已经被注册，请换一张卡！" + s.U2S(is_reg));
+            }
+            else if (radioButton_teacher.Checked)
             {
                 AVQuery<AVObject> query = new AVQuery<AVObject>("Teacher").WhereEqualTo("name", textBox_name_loster.Text).WhereEqualTo("tel", textBox_tel_loster.Text);
   
@@ -2580,9 +2627,25 @@ namespace CSharpDEMO
 
         async private void button_registerExerciser_Click(object sender, EventArgs e)
         {
+            string is_reg = "";
+            try
+            {
+                is_reg = readCard(0x19, 1);
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show("读卡失败，error:" + err.Message);
+            }
+
             string tel = textBox_exerciseTel.Text;
-            if (tel.Length!=11)
+            if (s.Unicode2String(is_reg) == "卡不存在")
+            { MessageBox.Show("请先放上卡再进行操作"); }
+            else if (tel.Length!=11)
             { MessageBox.Show("电话号码格式不对，请仔细核对！"); }
+            else if (is_reg != "00000000000000000000000000000000")
+            {
+                MessageBox.Show("该卡已经被注册，请换一张卡！" + s.U2S(is_reg));
+            }
             else
             {
                 try
@@ -2609,6 +2672,7 @@ namespace CSharpDEMO
                     textBox_addMoney.Text = banlance.ToString();
                     textBox_balance.Text = banlance.ToString();
                     writeCard(0x04, 1, s.KeyID2Card(exerciser.ObjectId));
+                    writeCard(0x19, 1, s.S2U("used by exerciser"));
                     /********存储数据到本地sqlite**********************************/
 
 
@@ -3018,8 +3082,8 @@ namespace CSharpDEMO
                     string tel = textBox_exerciseTel.Text;
                     string cardNum = record.Get<String>("Card_num");
 
-                    string enterTime = "2018-06-26 23:00:00";
-                    //string enterTime = record.Get<String>("enterTime");
+                    //string enterTime = "2018-06-26 23:00:00";
+                    string enterTime = record.Get<String>("enterTime");
                     string course = record.Get<String>("courseName");
                     string price = record.Get<String>("price");
                     string balance = exerciser.Get<String>("balance");
