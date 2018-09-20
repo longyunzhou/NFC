@@ -245,7 +245,6 @@ D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\bin\Release\System.Net.Http
 D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\bin\Release\System.Net.Http.Primitives.xml
 D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.csproj.App.config
 D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.csproj.ResolveComReference.cache
-D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.Form1.resources
 D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.Form_login.resources
 D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.Properties.Resources.resources
 D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.csproj.GenerateResource.cache
@@ -253,3 +252,5 @@ D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.cspr
 D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.csproj.CopyComplete
 D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.exe
 D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.pdb
+D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.csprojAssemblyReference.cache
+D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.Form1.resources

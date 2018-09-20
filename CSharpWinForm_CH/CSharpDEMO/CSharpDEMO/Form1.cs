@@ -19,6 +19,7 @@ using System.Data.SQLite;
 using System.Reflection; // 引用这个才能使用Missing字段 
 namespace CSharpDEMO
 {
+   
     public partial class Form1 : Form
     {
         extend_Class s = new extend_Class();
@@ -947,7 +948,7 @@ namespace CSharpDEMO
             try
             {
                 is_reg = readCard(0x19, 1);
-                
+                Console.WriteLine(is_reg);
             }
             catch (Exception err)
             {
@@ -971,7 +972,7 @@ namespace CSharpDEMO
                 try
                 {/*防止读写过程中出错*/
                     textBox_cardNum.Text = readCard(0x00, 1).Substring(0, 8);
-                    string shenfen = s.Unicode2String(readCard(0x30, 1));
+                   // string shenfen = s.Unicode2String(readCard(0x30, 1));
                     writeCard(0x02, 1, s.String2Unicode("学生"));
                 }
                 catch (Exception ee)
@@ -1161,16 +1162,186 @@ namespace CSharpDEMO
       
         private void Form1_Load(object sender, EventArgs e)
         {
-          // comboBox_gender.Text = "男";
-        
-        comboBox_gender.SelectedIndex = comboBox_gender.Items.IndexOf("男");
+            CheckForIllegalCrossThreadCalls = false;
+           comboBox_gender.SelectedIndex = comboBox_gender.Items.IndexOf("男");
           //comboBox_courseType.SelectedIndex= comboBox_gender.Items.IndexOf("一对一");
           AVClient.Initialize("uwQ2g76bvCIMHAOUrdC08Lpn-gzGzoHsz", "ioIOpV4kQ6Cw0f3Eu97348qp");
-          //  AVClient.Initialize("OJQvXqlYqaFmnq4WXUE9v5Yr-gzGzoHsz", "eQ4Y1AIiACgGv7dK8fzAWIM7");
-
+            //  AVClient.Initialize("OJQvXqlYqaFmnq4WXUE9v5Yr-gzGzoHsz", "eQ4Y1AIiACgGv7dK8fzAWIM7");
+            
+            Thread thread1 = new Thread(Func1);
+            thread1.Start();
 
         }
 
+        async public void Func1()
+        {
+            while(true)
+            {
+                
+                Thread.Sleep(3000);
+                try
+                {
+                    string shenfen = s.Unicode2String(readCard(0x02, 1));
+                    textBox_shenfen.Text = shenfen;
+                }
+                catch (Exception err)
+                {
+                    MessageBox.Show("error:" + err.Message);
+                }
+
+                if (textBox_shenfen.Text == "学生")
+                {
+                    textBox_wage.Visible = false;
+                    label_wage.Visible = false;
+                    textBoxCourseTypeShow.Visible = true;
+                    textBox_courseTime_left.Visible = true;
+                    textBox_courseTimeSum.Visible = true;
+                    textBox_teacherShow.Visible = true;
+                    textBoxCourseTypeShow.Visible = true;
+                    label_coursetime_left.Visible = true;
+                    label_courseTypeShow.Visible = true;
+                    label_teacherShow.Visible = true;
+                    label_sumCourse.Visible = true;
+                    comboBox1.Visible = true;
+                    //读卡
+                    string ObID = "";
+                    try
+                    {
+                        //获取信息
+                        ObID = s.Card2KeyID(readCard(0x04, 1));
+                        //MessageBox.Show(ObID);
+                    }
+                    catch (Exception error)
+                    {
+                        MessageBox.Show("刷卡机需要重启，错误：" + error.Message);
+                        this.Close();
+
+                    }
+
+                    AVQuery<AVObject> query = new AVQuery<AVObject>("Student").WhereEqualTo("objectId", ObID);
+                    await query.FindAsync().ContinueWith(t =>
+                    {
+                        IEnumerable<AVObject> persons = t.Result;
+                        //sum = 0;
+                        int sum = persons.Count();
+
+                    });
+
+                    if (query.CountAsync().Result == 0)  //查到的数据为0个
+                    {
+                        MessageBox.Show("没有查到相关学生信息！");
+                    }
+                    else
+                    {
+                        AVObject myObject = query.FirstAsync().Result;
+                        /*************************************************************************/
+                        //read data from leancloud
+
+                        string Card_num = readCard(0x00, 1).Substring(0, 8);
+                        string name = myObject.Get<String>("name");
+                        string tel = myObject.Get<String>("tel");
+                        string gender = myObject.Get<String>("gender");
+                        string birth = myObject.Get<String>("birth");
+                        string courseName = myObject.Get<String>("courseName");
+                        string level = myObject.Get<String>("level");
+                        string courseType = myObject.Get<String>("courseType");
+                        string courseTime = myObject.Get<String>("courseTime");   //总课时数
+                        string courseTimeLeft = myObject.Get<String>("courseTimeLeft");   //剩余课时数
+                        string coursePrice = myObject.Get<String>("price");   //单价
+                        string teacher = myObject.Get<String>("stuTeacher");
+
+
+                        textBox_nameShow.Text = name;
+
+                        textBox4_courseNameShow.Text = courseName;
+                        textBoxCourseTypeShow.Text = courseType;
+                        textBox_telShow.Text = tel;
+                        textBox_courseTime_left.Text = courseTimeLeft;
+                        textBox_courseTimeSum.Text = courseTime;
+                        textBox_teacherShow.Text = teacher;
+
+
+                        byte[] buffer = new byte[1];
+                        int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
+                        int nRet_led = Reader.ControlLED(20, 1, buffer);
+                    }
+                }
+                else if (textBox_shenfen.Text == "老师")
+                {
+                    textBox_wage.Visible = true;
+                    label_wage.Visible = true;
+                    textBoxCourseTypeShow.Visible = false;
+                    textBox_courseTime_left.Visible = false;
+                    textBox_courseTimeSum.Visible = false;
+                    textBox_teacherShow.Visible = false;
+                    textBoxCourseTypeShow.Visible = false;
+                    label_coursetime_left.Visible = false;
+                    label_courseTypeShow.Visible = false;
+                    label_teacherShow.Visible = false;
+                    label_sumCourse.Visible = false;
+                    comboBox1.Visible = false;
+
+                    string ObID = "";
+                    try
+                    { ObID = s.Card2KeyID(readCard(0x04, 1)); }
+                    catch (Exception error)
+                    {
+                        MessageBox.Show("刷卡机需要重启，错误：" + error.Message);
+                        this.Close();
+                    }
+                    try
+                    {
+                        AVQuery<AVObject> query = new AVQuery<AVObject>("Teacher").WhereEqualTo("objectId", ObID);
+                        await query.FindAsync().ContinueWith(t => {
+                            IEnumerable<AVObject> persons = t.Result;
+                        });
+
+                        if (query.CountAsync().Result == 0)  //查到的数据为0个
+                        {
+                            MessageBox.Show("没有查到相关老师信息！");
+                        }
+                        else
+                        {
+                            AVObject myObjectTea = query.FirstAsync().Result;
+                            /*************************************************************************/
+                            //read data from leancloud
+                            string Card_num = myObjectTea.Get<String>("Card_num");
+                            string name = myObjectTea.Get<String>("name");
+                            string courseName = myObjectTea.Get<String>("course");
+                            string tel = myObjectTea.Get<String>("tel");
+                            string percent = myObjectTea.Get<String>("percent");
+
+                            textBox_nameShow.Text = name;
+                            textBox_shenfen.Text = "老师";
+                            textBox4_courseNameShow.Text = courseName;
+                            textBox_telShow.Text = tel;
+
+                            /************************************************** ***/
+                            //string name = textBox_nameShow.Text;
+                            //string telNum = textBox_telShow.Text;
+
+                            AVQuery<AVObject> queryPayRoll = new AVQuery<AVObject>("Student").WhereEqualTo("stuTeacher", name);//.WhereNotEqualTo("courseTimeLeft","0");  //WhereEqualTo("tel",telNum).        
+                            IEnumerable<AVObject> myObject = await queryPayRoll.FindAsync();
+                            string allStudent = "学生：\n";
+                            foreach (AVObject item in myObject)
+                            {
+                                allStudent = allStudent + item.Get<String>("name") + "\n";
+                            }
+
+                            byte[] buffer = new byte[1];
+                            int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
+                            int nRet_led = Reader.ControlLED(20, 3, buffer);
+                            MessageBox.Show(allStudent);
+
+                        }
+                    }
+                    catch (Exception ee)
+                    {
+                        MessageBox.Show("错误：" + ee.Message);
+                    }
+                }
+            }
+        }
         private void button1_Click(object sender, EventArgs e)
         {
             
@@ -1327,10 +1498,10 @@ namespace CSharpDEMO
             { MessageBox.Show("请先放上卡再进行操作"); }
             else if(tel.Length != 11)
             { MessageBox.Show("电话号码格式不正确"); MessageBox.Show("号码长度为："+tel.Length.ToString()); }
-            else if (is_reg != "00000000000000000000000000000000")
-            {
-                MessageBox.Show("该卡已经被注册，请换一张卡！" + s.U2S(is_reg));
-            }
+            //else if (is_reg != "00000000000000000000000000000000")
+            //{
+              //  MessageBox.Show("该卡已经被注册，请换一张卡！" + s.U2S(is_reg));
+            //}
             else
             {
                 step = 1;//tel is OK!
@@ -1805,7 +1976,7 @@ namespace CSharpDEMO
             }
         }
 
-       async private void button_readCard_Click(object sender, EventArgs e)
+       async public void button_readCard_Click(object sender, EventArgs e)
         {
             try { 
                 string shenfen = s.Unicode2String(readCard(0x02, 1));
@@ -2644,7 +2815,7 @@ namespace CSharpDEMO
             { MessageBox.Show("电话号码格式不对，请仔细核对！"); }
             else if (is_reg != "00000000000000000000000000000000")
             {
-                MessageBox.Show("该卡已经被注册，请换一张卡！" + s.U2S(is_reg));
+                MessageBox.Show("该卡已经被注册，请换一张卡！");
             }
             else
             {
