@@ -957,17 +957,23 @@ namespace CSharpDEMO
 
             int step = 0;
             string tel = textBox_tel.Text;
-
-            if (s.Unicode2String(is_reg) == "卡不存在")
-            { MessageBox.Show("请先放上卡再进行操作"); }
+            MessageBox.Show(is_reg);
+            //if (s.Unicode2String(is_reg) == "卡不存在")
+            if(is_reg== "00 00 00 00 00 00 00 00 53 61 4e 0d 5b 58 57 28")  //没有卡的话就会返回这个值。
+            {
+                MessageBox.Show("请先放上卡再进行操作");
+                is_reg = ""; //为什么要清除变量呢，因为不清除会有bug.
+            }
             else if (tel.Length != 11)
             { MessageBox.Show("电话号码格式不正确"); MessageBox.Show("号码长度为：" + tel.Length.ToString()); }
-            else if (is_reg == "used by student")
+            else if (is_reg != "00000000000000000000000000000000")
             {
                 MessageBox.Show("该卡已经被注册，请换一张卡！" + s.U2S(is_reg));
+                is_reg = ""; //为什么要清除变量呢，因为不清除会有bug.
             }
             else
             {
+                is_reg = ""; //为什么要清除变量呢，因为不清除会有bug.
                 step = 1;
                 try
                 {/*防止读写过程中出错*/
@@ -1159,7 +1165,7 @@ namespace CSharpDEMO
 
             }
         }
-      
+        public bool status_flag;
         private void Form1_Load(object sender, EventArgs e)
         {
             CheckForIllegalCrossThreadCalls = false;
@@ -1167,44 +1173,52 @@ namespace CSharpDEMO
           //comboBox_courseType.SelectedIndex= comboBox_gender.Items.IndexOf("一对一");
           AVClient.Initialize("uwQ2g76bvCIMHAOUrdC08Lpn-gzGzoHsz", "ioIOpV4kQ6Cw0f3Eu97348qp");
             //  AVClient.Initialize("OJQvXqlYqaFmnq4WXUE9v5Yr-gzGzoHsz", "eQ4Y1AIiACgGv7dK8fzAWIM7");
-            
-            Thread thread1 = new Thread(Func1);
-            thread1.Start();
+            status_flag =false;
+           
+
 
         }
 
         async public void Func1()
         {
-            while(true)
+            while (status_flag)
             {
-                
+                label_status.Text ="打卡中";
                 Thread.Sleep(3000);
+                textBox_wage.Visible = false;
+                label_wage.Visible = false;
+
+                textBoxCourseTypeShow.Visible = true;
+                textBox_courseTime_left.Visible = true;
+                textBox_courseTimeSum.Visible = true;
+                textBox_teacherShow.Visible = true;
+                textBoxCourseTypeShow.Visible = true;
+                label_coursetime_left.Visible = true;
+                label_courseTypeShow.Visible = true;
+                label_teacherShow.Visible = true;
+                label_sumCourse.Visible = true;
+                comboBox1.Visible = true;
+                //读卡
+                string ObID = "";
+                string is_reg = "";
                 try
                 {
-                    string shenfen = s.Unicode2String(readCard(0x02, 1));
-                    textBox_shenfen.Text = shenfen;
+                    is_reg = readCard_no_response(0x19, 1);
+                    Console.WriteLine(is_reg);
                 }
                 catch (Exception err)
                 {
-                    MessageBox.Show("error:" + err.Message);
+                    MessageBox.Show("读卡失败，error:" + err.Message);
                 }
 
-                if (textBox_shenfen.Text == "学生")
+                if (is_reg == "00 00 00 00 00 00 00 00 53 61 4e 0d 5b 58 57 28")  //没有卡的话就会返回这个值。
                 {
-                    textBox_wage.Visible = false;
-                    label_wage.Visible = false;
-                    textBoxCourseTypeShow.Visible = true;
-                    textBox_courseTime_left.Visible = true;
-                    textBox_courseTimeSum.Visible = true;
-                    textBox_teacherShow.Visible = true;
-                    textBoxCourseTypeShow.Visible = true;
-                    label_coursetime_left.Visible = true;
-                    label_courseTypeShow.Visible = true;
-                    label_teacherShow.Visible = true;
-                    label_sumCourse.Visible = true;
-                    comboBox1.Visible = true;
-                    //读卡
-                    string ObID = "";
+                    // MessageBox.Show("请先放上卡再进行操作");
+                    label_message.Text = "等待刷卡...";
+                    is_reg = ""; //为什么要清除变量呢，因为不清除会有bug.
+                }
+                else
+                {
                     try
                     {
                         //获取信息
@@ -1215,22 +1229,17 @@ namespace CSharpDEMO
                     {
                         MessageBox.Show("刷卡机需要重启，错误：" + error.Message);
                         this.Close();
-
                     }
 
                     AVQuery<AVObject> query = new AVQuery<AVObject>("Student").WhereEqualTo("objectId", ObID);
-                    await query.FindAsync().ContinueWith(t =>
-                    {
+                    await query.FindAsync().ContinueWith(t => {
                         IEnumerable<AVObject> persons = t.Result;
                         //sum = 0;
                         int sum = persons.Count();
 
                     });
-
                     if (query.CountAsync().Result == 0)  //查到的数据为0个
-                    {
-                        MessageBox.Show("没有查到相关学生信息！");
-                    }
+                    { MessageBox.Show("没有查到相关学生信息！"); }
                     else
                     {
                         AVObject myObject = query.FirstAsync().Result;
@@ -1248,139 +1257,154 @@ namespace CSharpDEMO
                         string courseTime = myObject.Get<String>("courseTime");   //总课时数
                         string courseTimeLeft = myObject.Get<String>("courseTimeLeft");   //剩余课时数
                         string coursePrice = myObject.Get<String>("price");   //单价
-                        string teacher = myObject.Get<String>("stuTeacher");
 
-
-                        textBox_nameShow.Text = name;
-
-                        textBox4_courseNameShow.Text = courseName;
-                        textBoxCourseTypeShow.Text = courseType;
-                        textBox_telShow.Text = tel;
-                        textBox_courseTime_left.Text = courseTimeLeft;
-                        textBox_courseTimeSum.Text = courseTime;
-                        textBox_teacherShow.Text = teacher;
-
-
-                        byte[] buffer = new byte[1];
-                        int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
-                        int nRet_led = Reader.ControlLED(20, 1, buffer);
-                    }
-                }
-                else if (textBox_shenfen.Text == "老师")
-                {
-                    textBox_wage.Visible = true;
-                    label_wage.Visible = true;
-                    textBoxCourseTypeShow.Visible = false;
-                    textBox_courseTime_left.Visible = false;
-                    textBox_courseTimeSum.Visible = false;
-                    textBox_teacherShow.Visible = false;
-                    textBoxCourseTypeShow.Visible = false;
-                    label_coursetime_left.Visible = false;
-                    label_courseTypeShow.Visible = false;
-                    label_teacherShow.Visible = false;
-                    label_sumCourse.Visible = false;
-                    comboBox1.Visible = false;
-
-                    string ObID = "";
-                    try
-                    { ObID = s.Card2KeyID(readCard(0x04, 1)); }
-                    catch (Exception error)
-                    {
-                        MessageBox.Show("刷卡机需要重启，错误：" + error.Message);
-                        this.Close();
-                    }
-                    try
-                    {
-                        AVQuery<AVObject> query = new AVQuery<AVObject>("Teacher").WhereEqualTo("objectId", ObID);
-                        await query.FindAsync().ContinueWith(t => {
-                            IEnumerable<AVObject> persons = t.Result;
-                        });
-
-                        if (query.CountAsync().Result == 0)  //查到的数据为0个
+                        string objectID = myObject.ObjectId;
+                        //MessageBox.Show("学生：" + name + " 刷卡");
+                        label_message.Text = "学生：" + name + " 刷卡";
+                        int times = Convert.ToInt16(courseTimeLeft);
+                        if (times == 0)
+                        { MessageBox.Show("剩余课时为0，请充值"); }
+                        else if (textBox_telShow.Text== tel)
                         {
-                            MessageBox.Show("没有查到相关老师信息！");
+                            label_message.Text="如果要刷两次卡,请"+"\n"+"琴行工作人员协助操作!";
                         }
                         else
                         {
-                            AVObject myObjectTea = query.FirstAsync().Result;
-                            /*************************************************************************/
-                            //read data from leancloud
-                            string Card_num = myObjectTea.Get<String>("Card_num");
-                            string name = myObjectTea.Get<String>("name");
-                            string courseName = myObjectTea.Get<String>("course");
-                            string tel = myObjectTea.Get<String>("tel");
-                            string percent = myObjectTea.Get<String>("percent");
 
+                            myObject["courseTimeLeft"] = (times - 1).ToString();
+                            await myObject.SaveAsync();
+                            writeCard(0x15, 1, s.S2U((times - 1).ToString()));       //剩余课时数写卡
+                            textBox_courseTime_left.Text = s.U2S(readCard(0x15, 1));
+                            AVObject Payroll = new AVObject("Payroll");
+                            Payroll["time"] = DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss");
+                            Payroll["month"] = DateTime.Now.ToString("yyyyMM");
+                            Payroll["student"] = myObject.Get<String>("name");
+                            Payroll["teacher"] = myObject.Get<String>("stuTeacher");
+                            Payroll["pay"] = myObject.Get<String>("price");
+                            Payroll["courseName"] = courseName;
+                            await Payroll.SaveAsync();
                             textBox_nameShow.Text = name;
-                            textBox_shenfen.Text = "老师";
+                            textBox_shenfen.Text = "学生";
                             textBox4_courseNameShow.Text = courseName;
+                            textBoxCourseTypeShow.Text = courseType;
                             textBox_telShow.Text = tel;
-
-                            /************************************************** ***/
-                            //string name = textBox_nameShow.Text;
-                            //string telNum = textBox_telShow.Text;
-
-                            AVQuery<AVObject> queryPayRoll = new AVQuery<AVObject>("Student").WhereEqualTo("stuTeacher", name);//.WhereNotEqualTo("courseTimeLeft","0");  //WhereEqualTo("tel",telNum).        
-                            IEnumerable<AVObject> myObject = await queryPayRoll.FindAsync();
-                            string allStudent = "学生：\n";
-                            foreach (AVObject item in myObject)
-                            {
-                                allStudent = allStudent + item.Get<String>("name") + "\n";
-                            }
+                            textBox_courseTime_left.Text = (times - 1).ToString();
+                            textBox_courseTimeSum.Text = courseTime;
+                            textBox_teacherShow.Text = myObject.Get<String>("stuTeacher");
+                            string stuTeacher = textBox_teacherShow.Text;
 
                             byte[] buffer = new byte[1];
                             int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
                             int nRet_led = Reader.ControlLED(20, 3, buffer);
-                            MessageBox.Show(allStudent);
+                            if (times - 1 <= 3)
+                            { MessageBox.Show("当前剩余" + (times - 1).ToString() + "课时" + "，请及时充值！"); }
+                            // MessageBox.Show("扣费成功！");
+                            label_message.Text = "扣费成功";
+                            /*****存储数据到本地***************/
+                            try
+                            {
+                                //sql = new sq("data source= D:/data/test.db");
+                                ////创建名为payroll的数据表
+                                //sql.CreateTable("payroll", new string[] { "time", "month", "student", "teacher", "pay", "courseName" },
+                                //                            new string[] { "TEXT", "TEXT", "TEXT", "TEXT", "INTEGER", "TEXT" });
+                                ////插入数据
+                                //sql.InsertValues("payroll", new string[] { DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss"), DateTime.Now.ToString("yyyyMM"), name, stuTeacher, coursePrice, courseName });
+                                ////need update data here
+
+                                ////关闭数据库
+                                //sql.CloseConnection();
+
+
+                                //存储到excel
+                                Excel.Application excelApp = new Excel.Application();
+                                if (excelApp == null)
+                                {
+                                    // if equal null means EXCEL is not installed.  
+                                    MessageBox.Show("Excel is not properly installed!");
+                                }
+
+                                string excelPath = @"D:\课时流水.xlsx";
+                                string filename = excelPath;// @"D:\生产产量纪录.xlsx";
+                                                            // open a workbook,if not exist, create a new one  
+                                Excel.Workbook workBook;
+                                if (File.Exists(filename))
+                                {
+                                    workBook = excelApp.Workbooks.Open(filename, 0, false, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+                                }
+                                else
+                                {
+                                    workBook = excelApp.Workbooks.Add(true);
+                                }
+                                //new a worksheet  
+                                Excel.Worksheet workSheet = workBook.ActiveSheet as Excel.Worksheet;
+                                //write data
+                                workSheet = (Excel.Worksheet)workBook.Worksheets.get_Item(1);//获得第i个sheet，准备写入  
+                                workSheet.Cells[1, 1] = "上课时间";
+                                workSheet.Cells[1, 2] = "月份";
+                                workSheet.Cells[1, 3] = "学生姓名";
+                                workSheet.Cells[1, 4] = "老师姓名";
+                                workSheet.Cells[1, 5] = "课程价格";
+                                workSheet.Cells[1, 6] = "课程";
+
+
+                                Microsoft.Office.Interop.Excel.Range range = workSheet.UsedRange;
+                                int colCount = range.Columns.Count;
+                                int rowCount = range.Rows.Count;
+
+                                workSheet.Cells[rowCount + 1, 1] = DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss");
+                                workSheet.Cells[rowCount + 1, 2] = DateTime.Now.ToString("yyyyMM");
+                                workSheet.Cells[rowCount + 1, 3] = name;
+                                workSheet.Cells[rowCount + 1, 4] = textBox_teacherShow.Text;
+                                workSheet.Cells[rowCount + 1, 5] = coursePrice;
+                                workSheet.Cells[rowCount + 1, 6] = courseName;
+
+                                //set visible the Excel will run in background  
+                                excelApp.Visible = false;
+                                //set false the alerts will not display  
+                                excelApp.DisplayAlerts = false;
+                                workBook.SaveAs(filename);
+                                workBook.Close(false, Missing.Value, Missing.Value);
+                                //quit and clean up objects  
+                                excelApp.Quit();
+                                workSheet = null;
+                                workBook = null;
+                                excelApp = null;
+                                GC.Collect();
+
+                            }
+                            catch (Exception erro)
+                            {
+                                MessageBox.Show("本地数据存储错误" + erro.Message);
+                                this.Close();
+                            }
 
                         }
-                    }
-                    catch (Exception ee)
-                    {
-                        MessageBox.Show("错误：" + ee.Message);
+
+
                     }
                 }
+                
+                              
             }
+            label_status.Text = "非打卡模式";
+
         }
+       
         private void button1_Click(object sender, EventArgs e)
         {
+            status_flag = !status_flag;
+            Thread thread1 = new Thread(Func1);
+            if (status_flag)
+            {
+                thread1.Start();
+                button1.Text = "打卡模式";
+            }
+            else
+            { thread1.Abort();
+              button1.Text = "非打卡模式";
+            }
             
-            extend_Class a=new extend_Class() ;
-           // string date = a.String2Unicode(dateTimePicker2.Value.Date.ToString());
-            //string test = a.String2Unicode(date.Substring(0, date.Length - 9));
-            Console.WriteLine("helloworld");
            
-             string test = a.String2Unicode("汉字");
-            Console.WriteLine(test);
-            Console.WriteLine(a.StringToUnicode("汉字"));
-            Console.WriteLine(a.Unicode2String(test));
-            string register_date = dateTimePicker2.Value.ToString();
-           
-            //控制蜂鸣器和绿色LED
-            byte[] buffer = new byte[1];
-            int nRet_boomer = Reader.ControlBuzzer(20, 2, buffer);//（占空比，次数，没有用但是要的一个参数）
-            int nRet_led = Reader.ControlLED(20,3, buffer);
-            //  textBox1.Text =a.UnicodeToString(test);
-            // textBox1.Text=a.readData(0x10, 0x01);
-            string date = dateTimePicker2.Value.Date.ToString();            
-            string txt =date.Substring(0,date.Length-8);
-
-            //textBox1.Text = register_date.Substring(0, register_date.Length - 9);
-            textBox1.Text = a.S2U(txt);
-           a.writeData(a.S2U(txt), 0x10, 0x01);
-            //Console.WriteLine(a.S2U(txt));
-            Console.WriteLine(a.S2U(txt));
-            string aa = a.S2U(txt);
-
-            Console.WriteLine(a.U2S(aa));
-            textBox1.Text = a.U2S(aa);
-            MessageBox.Show("Hello~~~");
-            /*
-            AVObject character_get = AVObject.CreateWithoutData("Character", "5acb7bb59f54541c8bb9df2a");
-            character_get.FetchAsync();
-             Thread.Sleep(2000);
-            textBox1.Text = character_get.Get<String>("name");
-            */
         }
 
         private void read_btn_Click(object sender, EventArgs e)
@@ -1447,6 +1471,22 @@ namespace CSharpDEMO
             }
             return ToHexString(buffer);
         }
+        private string readCard_no_response(byte blk_add, byte num_blk)
+        {
+            byte mode = 0x0000;
+            string password_A = "ff ff ff ff ff ff";
+            byte[] snr = new byte[6];
+            snr = convertSNR(password_A, 6);
+            byte[] buffer = new byte[16 * num_blk];
+            int nRet = Reader.MF_Read(mode, blk_add, num_blk, snr, buffer);
+            if (buffer[0] == 0x83)
+            {
+                //MessageBox.Show("卡不存在！");
+                label_message.Text = "等待刷卡";
+                return s.String2Unicode("卡不存在");
+            }
+            return ToHexString(buffer);
+        }
         private bool cardCheck()
         {
             byte mode = 0x0000;
@@ -1494,8 +1534,11 @@ namespace CSharpDEMO
             int step = 0;
             textBox_teacherCard.Text = readCard(0x00, 1).Substring(0, 8);
             string tel = textBox_teacherTel.Text;
-            if (s.Unicode2String(is_reg) == "卡不存在")
-            { MessageBox.Show("请先放上卡再进行操作"); }
+            //if (s.Unicode2String(is_reg) == "卡不存在")
+            if (is_reg == "00 00 00 00 00 00 00 00 53 61 4e 0d 5b 58 57 28")
+            {   MessageBox.Show("请先放上卡再进行操作");
+                is_reg = ""; //为什么要清除变量呢，因为不清除会有bug.
+            }
             else if(tel.Length != 11)
             { MessageBox.Show("电话号码格式不正确"); MessageBox.Show("号码长度为："+tel.Length.ToString()); }
             //else if (is_reg != "00000000000000000000000000000000")
@@ -1504,6 +1547,7 @@ namespace CSharpDEMO
             //}
             else
             {
+                is_reg = ""; //为什么要清除变量呢，因为不清除会有bug.
                 step = 1;//tel is OK!
                 try
                 {/*防止读写过程中出错*/
@@ -1692,166 +1736,185 @@ namespace CSharpDEMO
             comboBox1.Visible = true;
             //读卡
             string ObID = "";
+            string is_reg = "";
             try
             {
-                //获取信息
-                ObID = s.Card2KeyID(readCard(0x04, 1));
-                //MessageBox.Show(ObID);
+                is_reg = readCard(0x19, 1);
+                Console.WriteLine(is_reg);
             }
-            catch (Exception error)
+            catch (Exception err)
             {
-                MessageBox.Show("刷卡机需要重启，错误："+ error.Message);
-                this.Close();
+                MessageBox.Show("读卡失败，error:" + err.Message);
             }
-
-            AVQuery<AVObject> query = new AVQuery<AVObject>("Student").WhereEqualTo("objectId", ObID);            
-            await query.FindAsync().ContinueWith(t => {
-                IEnumerable<AVObject> persons = t.Result;
-                //sum = 0;
-                int sum = persons.Count();
-
-            });
             
-            if (query.CountAsync().Result == 0)  //查到的数据为0个
-            { MessageBox.Show("没有查到相关学生信息！"); }
+            if (is_reg == "00 00 00 00 00 00 00 00 53 61 4e 0d 5b 58 57 28")  //没有卡的话就会返回这个值。
+            {
+                MessageBox.Show("请先放上卡再进行操作");
+                is_reg = ""; //为什么要清除变量呢，因为不清除会有bug.
+            }
             else
             {
-                AVObject myObject = query.FirstAsync().Result;     
-                /*************************************************************************/
-                //read data from leancloud
-
-                string Card_num = readCard(0x00, 1).Substring(0, 8);
-                string name = myObject.Get<String>("name");
-                string tel = myObject.Get<String>("tel");
-                string gender = myObject.Get<String>("gender");
-                string birth = myObject.Get<String>("birth");
-                string courseName = myObject.Get<String>("courseName");
-                string level = myObject.Get<String>("level");
-                string courseType = myObject.Get<String>("courseType");
-                string courseTime = myObject.Get<String>("courseTime");   //总课时数
-                string courseTimeLeft = myObject.Get<String>("courseTimeLeft");   //剩余课时数
-                string coursePrice = myObject.Get<String>("price");   //单价
-
-                string objectID = myObject.ObjectId;
-                MessageBox.Show("学生："+name+" 刷卡");
-                int times = Convert.ToInt16(courseTimeLeft);
-                if (times == 0)
-                { MessageBox.Show("剩余课时为0，请充值"); }
-                else
+                try
                 {
-                    myObject["courseTimeLeft"] = (times - 1).ToString();
-                    await myObject.SaveAsync();
-                    writeCard(0x15, 1, s.S2U((times - 1).ToString()));       //剩余课时数写卡
-                    textBox_courseTime_left.Text = s.U2S(readCard(0x15, 1));
-                    AVObject Payroll = new AVObject("Payroll");
-                    Payroll["time"] = DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss");
-                    Payroll["month"] = DateTime.Now.ToString("yyyyMM");
-                    Payroll["student"] = myObject.Get<String>("name");
-                    Payroll["teacher"] = myObject.Get<String>("stuTeacher");
-                    Payroll["pay"] = myObject.Get<String>("price");
-                    Payroll["courseName"] =courseName;
-                    await Payroll.SaveAsync();
-                    textBox_nameShow.Text = name;
-                    textBox_shenfen.Text = "学生";
-                    textBox4_courseNameShow.Text = courseName;
-                    textBoxCourseTypeShow.Text = courseType;
-                    textBox_telShow.Text = tel;
-                    textBox_courseTime_left.Text = (times - 1).ToString();
-                    textBox_courseTimeSum.Text = courseTime;
-                    textBox_teacherShow.Text = myObject.Get<String>("stuTeacher");
-                    string stuTeacher = textBox_teacherShow.Text;
-
-                    byte[] buffer = new byte[1];
-                    int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
-                    int nRet_led = Reader.ControlLED(20, 3, buffer);
-                    if(times-1<=3)
-                    { MessageBox.Show("当前剩余"+(times-1).ToString()+"课时"+"，请及时充值！"); }
-                    MessageBox.Show("扣费成功！");
-
-                    /*****存储数据到本地***************/
-                    try
-                    {
-                        //sql = new sq("data source= D:/data/test.db");
-                        ////创建名为payroll的数据表
-                        //sql.CreateTable("payroll", new string[] { "time", "month", "student", "teacher", "pay", "courseName" },
-                        //                            new string[] { "TEXT", "TEXT", "TEXT", "TEXT", "INTEGER", "TEXT" });
-                        ////插入数据
-                        //sql.InsertValues("payroll", new string[] { DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss"), DateTime.Now.ToString("yyyyMM"), name, stuTeacher, coursePrice, courseName });
-                        ////need update data here
-
-                        ////关闭数据库
-                        //sql.CloseConnection();
-
-
-                        //存储到excel
-                        Excel.Application excelApp = new Excel.Application();
-                        if (excelApp == null)
-                        {
-                            // if equal null means EXCEL is not installed.  
-                            MessageBox.Show("Excel is not properly installed!");
-                        }
-
-                        string excelPath = @"D:\课时流水.xlsx";
-                        string filename = excelPath;// @"D:\生产产量纪录.xlsx";
-                                                    // open a workbook,if not exist, create a new one  
-                        Excel.Workbook workBook;
-                        if (File.Exists(filename))
-                        {
-                            workBook = excelApp.Workbooks.Open(filename, 0, false, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
-                        }
-                        else
-                        {
-                            workBook = excelApp.Workbooks.Add(true);
-                        }
-                        //new a worksheet  
-                        Excel.Worksheet workSheet = workBook.ActiveSheet as Excel.Worksheet;
-                        //write data
-                        workSheet = (Excel.Worksheet)workBook.Worksheets.get_Item(1);//获得第i个sheet，准备写入  
-                        workSheet.Cells[1, 1] = "上课时间";
-                        workSheet.Cells[1, 2] = "月份";
-                        workSheet.Cells[1, 3] = "学生姓名";
-                        workSheet.Cells[1, 4] = "老师姓名";
-                        workSheet.Cells[1, 5] = "课程价格";
-                        workSheet.Cells[1, 6] = "课程";
-
-
-                        Microsoft.Office.Interop.Excel.Range range = workSheet.UsedRange;
-                        int colCount = range.Columns.Count;
-                        int rowCount = range.Rows.Count;
-
-                        workSheet.Cells[rowCount + 1, 1] = DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss");
-                        workSheet.Cells[rowCount + 1, 2] = DateTime.Now.ToString("yyyyMM");
-                        workSheet.Cells[rowCount + 1, 3] = name;
-                        workSheet.Cells[rowCount + 1, 4] = textBox_teacherShow.Text;
-                        workSheet.Cells[rowCount + 1, 5] = coursePrice;
-                        workSheet.Cells[rowCount + 1, 6] = courseName;
-
-                        //set visible the Excel will run in background  
-                        excelApp.Visible = false;
-                        //set false the alerts will not display  
-                        excelApp.DisplayAlerts = false;
-                        workBook.SaveAs(filename);
-                        workBook.Close(false, Missing.Value, Missing.Value);
-                        //quit and clean up objects  
-                        excelApp.Quit();
-                        workSheet = null;
-                        workBook = null;
-                        excelApp = null;
-                        GC.Collect();
-
-                    }
-                    catch (Exception erro)
-                    {
-                        MessageBox.Show("本地数据存储错误" + erro.Message);
-                        this.Close();
-                    }
-
+                    //获取信息
+                    ObID = s.Card2KeyID(readCard(0x04, 1));
+                    //MessageBox.Show(ObID);
+                }
+                catch (Exception error)
+                {
+                    MessageBox.Show("刷卡机需要重启，错误：" + error.Message);
+                    this.Close();
                 }
 
+                AVQuery<AVObject> query = new AVQuery<AVObject>("Student").WhereEqualTo("objectId", ObID);
+                await query.FindAsync().ContinueWith(t => {
+                    IEnumerable<AVObject> persons = t.Result;
+                    //sum = 0;
+                    int sum = persons.Count();
 
-            }
+                });
+                if (query.CountAsync().Result == 0)  //查到的数据为0个
+                { MessageBox.Show("没有查到相关学生信息！"); }
+                else
+                {
+                    AVObject myObject = query.FirstAsync().Result;
+                    /*************************************************************************/
+                    //read data from leancloud
 
+                    string Card_num = readCard(0x00, 1).Substring(0, 8);
+                    string name = myObject.Get<String>("name");
+                    string tel = myObject.Get<String>("tel");
+                    string gender = myObject.Get<String>("gender");
+                    string birth = myObject.Get<String>("birth");
+                    string courseName = myObject.Get<String>("courseName");
+                    string level = myObject.Get<String>("level");
+                    string courseType = myObject.Get<String>("courseType");
+                    string courseTime = myObject.Get<String>("courseTime");   //总课时数
+                    string courseTimeLeft = myObject.Get<String>("courseTimeLeft");   //剩余课时数
+                    string coursePrice = myObject.Get<String>("price");   //单价
+
+                    string objectID = myObject.ObjectId;
+                    MessageBox.Show("学生：" + name + " 刷卡");
+                    int times = Convert.ToInt16(courseTimeLeft);
+                    if (times == 0)
+                    { MessageBox.Show("剩余课时为0，请充值"); }
+                    else
+                    {
+                        myObject["courseTimeLeft"] = (times - 1).ToString();
+                        await myObject.SaveAsync();
+                        writeCard(0x15, 1, s.S2U((times - 1).ToString()));       //剩余课时数写卡
+                        textBox_courseTime_left.Text = s.U2S(readCard(0x15, 1));
+                        AVObject Payroll = new AVObject("Payroll");
+                        Payroll["time"] = DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss");
+                        Payroll["month"] = DateTime.Now.ToString("yyyyMM");
+                        Payroll["student"] = myObject.Get<String>("name");
+                        Payroll["teacher"] = myObject.Get<String>("stuTeacher");
+                        Payroll["pay"] = myObject.Get<String>("price");
+                        Payroll["courseName"] = courseName;
+                        await Payroll.SaveAsync();
+                        textBox_nameShow.Text = name;
+                        textBox_shenfen.Text = "学生";
+                        textBox4_courseNameShow.Text = courseName;
+                        textBoxCourseTypeShow.Text = courseType;
+                        textBox_telShow.Text = tel;
+                        textBox_courseTime_left.Text = (times - 1).ToString();
+                        textBox_courseTimeSum.Text = courseTime;
+                        textBox_teacherShow.Text = myObject.Get<String>("stuTeacher");
+                        string stuTeacher = textBox_teacherShow.Text;
+
+                        byte[] buffer = new byte[1];
+                        int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
+                        int nRet_led = Reader.ControlLED(20, 3, buffer);
+                        if (times - 1 <= 3)
+                        { MessageBox.Show("当前剩余" + (times - 1).ToString() + "课时" + "，请及时充值！"); }
+                        MessageBox.Show("扣费成功！");
+
+                        /*****存储数据到本地***************/
+                        try
+                        {
+                            //sql = new sq("data source= D:/data/test.db");
+                            ////创建名为payroll的数据表
+                            //sql.CreateTable("payroll", new string[] { "time", "month", "student", "teacher", "pay", "courseName" },
+                            //                            new string[] { "TEXT", "TEXT", "TEXT", "TEXT", "INTEGER", "TEXT" });
+                            ////插入数据
+                            //sql.InsertValues("payroll", new string[] { DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss"), DateTime.Now.ToString("yyyyMM"), name, stuTeacher, coursePrice, courseName });
+                            ////need update data here
+
+                            ////关闭数据库
+                            //sql.CloseConnection();
+
+
+                            //存储到excel
+                            Excel.Application excelApp = new Excel.Application();
+                            if (excelApp == null)
+                            {
+                                // if equal null means EXCEL is not installed.  
+                                MessageBox.Show("Excel is not properly installed!");
+                            }
+
+                            string excelPath = @"D:\课时流水.xlsx";
+                            string filename = excelPath;// @"D:\生产产量纪录.xlsx";
+                                                        // open a workbook,if not exist, create a new one  
+                            Excel.Workbook workBook;
+                            if (File.Exists(filename))
+                            {
+                                workBook = excelApp.Workbooks.Open(filename, 0, false, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+                            }
+                            else
+                            {
+                                workBook = excelApp.Workbooks.Add(true);
+                            }
+                            //new a worksheet  
+                            Excel.Worksheet workSheet = workBook.ActiveSheet as Excel.Worksheet;
+                            //write data
+                            workSheet = (Excel.Worksheet)workBook.Worksheets.get_Item(1);//获得第i个sheet，准备写入  
+                            workSheet.Cells[1, 1] = "上课时间";
+                            workSheet.Cells[1, 2] = "月份";
+                            workSheet.Cells[1, 3] = "学生姓名";
+                            workSheet.Cells[1, 4] = "老师姓名";
+                            workSheet.Cells[1, 5] = "课程价格";
+                            workSheet.Cells[1, 6] = "课程";
+
+
+                            Microsoft.Office.Interop.Excel.Range range = workSheet.UsedRange;
+                            int colCount = range.Columns.Count;
+                            int rowCount = range.Rows.Count;
+
+                            workSheet.Cells[rowCount + 1, 1] = DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss");
+                            workSheet.Cells[rowCount + 1, 2] = DateTime.Now.ToString("yyyyMM");
+                            workSheet.Cells[rowCount + 1, 3] = name;
+                            workSheet.Cells[rowCount + 1, 4] = textBox_teacherShow.Text;
+                            workSheet.Cells[rowCount + 1, 5] = coursePrice;
+                            workSheet.Cells[rowCount + 1, 6] = courseName;
+
+                            //set visible the Excel will run in background  
+                            excelApp.Visible = false;
+                            //set false the alerts will not display  
+                            excelApp.DisplayAlerts = false;
+                            workBook.SaveAs(filename);
+                            workBook.Close(false, Missing.Value, Missing.Value);
+                            //quit and clean up objects  
+                            excelApp.Quit();
+                            workSheet = null;
+                            workBook = null;
+                            excelApp = null;
+                            GC.Collect();
+
+                        }
+                        catch (Exception erro)
+                        {
+                            MessageBox.Show("本地数据存储错误" + erro.Message);
+                            this.Close();
+                        }
+
+                    }
+
+
+                }
             }
+         
+
+         }
 
       async private void button2_Click(object sender, EventArgs e)
         {
