@@ -957,7 +957,7 @@ namespace CSharpDEMO
 
             int step = 0;
             string tel = textBox_tel.Text;
-            MessageBox.Show(is_reg);
+            //MessageBox.Show(is_reg);
             //if (s.Unicode2String(is_reg) == "卡不存在")
             if(is_reg== "00 00 00 00 00 00 00 00 53 61 4e 0d 5b 58 57 28")  //没有卡的话就会返回这个值。
             {
@@ -966,11 +966,10 @@ namespace CSharpDEMO
             }
             else if (tel.Length != 11)
             { MessageBox.Show("电话号码格式不正确"); MessageBox.Show("号码长度为：" + tel.Length.ToString()); }
-            else if (is_reg != "00000000000000000000000000000000")
-            {
-                MessageBox.Show("该卡已经被注册，请换一张卡！" + s.U2S(is_reg));
-                is_reg = ""; //为什么要清除变量呢，因为不清除会有bug.
-            }
+            //else if (is_reg != "00000000000000000000000000000000")
+            //{ MessageBox.Show("该卡已经被注册，请换一张卡！" + s.U2S(is_reg));
+               // is_reg = ""; //为什么要清除变量呢，因为不清除会有bug.
+            //}
             else
             {
                 is_reg = ""; //为什么要清除变量呢，因为不清除会有bug.
@@ -1043,7 +1042,7 @@ namespace CSharpDEMO
                         Student["price"] = price.ToString();          //课程单价
                         Student["sum_money"] = sum_money.ToString();          //总费用
                         Student["stuTeacher"] = stuTeacher;          //学生的老师
-
+                        Student["add_flag"] = "no";
 
                         Student["regTime"] = date_YMD;
                         await Student.SaveAsync();
@@ -1256,7 +1255,33 @@ namespace CSharpDEMO
                         string courseType = myObject.Get<String>("courseType");
                         string courseTime = myObject.Get<String>("courseTime");   //总课时数
                         string courseTimeLeft = myObject.Get<String>("courseTimeLeft");   //剩余课时数
-                        string coursePrice = myObject.Get<String>("price");   //单价
+                        //string coursePrice = myObject.Get<String>("price");   //单价
+
+                        string add_flag = myObject.Get<String>("add_flag");
+                        string price = myObject.Get<String>("price");
+                        int times1 = Convert.ToInt16(courseTimeLeft);
+                        if (add_flag == "yes")
+                        {
+                            string courseTimeLeft1 = myObject.Get<String>("courseTimeLeft1");   //剩余课时数
+                            string courseTimeLeft2 = myObject.Get<String>("courseTimeLeft2");   //剩余课时数
+                            string price1 = myObject.Get<String>("price1");
+                            string price2 = myObject.Get<String>("price2");
+                            times1 = Convert.ToInt16(courseTimeLeft1);
+                            int times2 = Convert.ToInt16(courseTimeLeft2);
+                            if (times1 == 0)
+                            {
+                                myObject["courseTimeLeft1"] = times2.ToString();
+                                myObject["price1"] = price2;
+                                myObject["price"] = price2;
+                                myObject["courseTimeLeft2"] = "0";
+                                //myObject["price2"] = "0";
+                                times1 = times2;
+                                price1 = price2;
+                            }
+                            price = price1;
+
+                        }
+
 
                         string objectID = myObject.ObjectId;
                         //MessageBox.Show("学生：" + name + " 刷卡");
@@ -1264,13 +1289,12 @@ namespace CSharpDEMO
                         int times = Convert.ToInt16(courseTimeLeft);
                         if (times == 0)
                         { MessageBox.Show("剩余课时为0，请充值"); }
-                        else if (textBox_telShow.Text== tel)
-                        {
-                            label_message.Text="如果要刷两次卡,请"+"\n"+"琴行工作人员协助操作!";
-                        }
+                       // else if (textBox_telShow.Text== tel)
+                        //{ label_message.Text="如果要刷两次卡,请"+"\n"+"琴行工作人员协助操作!";
+                        //}
                         else
                         {
-
+                            myObject["courseTimeLeft1"] = (times1 - 1).ToString();
                             myObject["courseTimeLeft"] = (times - 1).ToString();
                             await myObject.SaveAsync();
                             writeCard(0x15, 1, s.S2U((times - 1).ToString()));       //剩余课时数写卡
@@ -1280,7 +1304,7 @@ namespace CSharpDEMO
                             Payroll["month"] = DateTime.Now.ToString("yyyyMM");
                             Payroll["student"] = myObject.Get<String>("name");
                             Payroll["teacher"] = myObject.Get<String>("stuTeacher");
-                            Payroll["pay"] = myObject.Get<String>("price");
+                            Payroll["pay"] = price;
                             Payroll["courseName"] = courseName;
                             await Payroll.SaveAsync();
                             textBox_nameShow.Text = name;
@@ -1355,7 +1379,7 @@ namespace CSharpDEMO
                                 workSheet.Cells[rowCount + 1, 2] = DateTime.Now.ToString("yyyyMM");
                                 workSheet.Cells[rowCount + 1, 3] = name;
                                 workSheet.Cells[rowCount + 1, 4] = textBox_teacherShow.Text;
-                                workSheet.Cells[rowCount + 1, 5] = coursePrice;
+                                workSheet.Cells[rowCount + 1, 5] = price;
                                 workSheet.Cells[rowCount + 1, 6] = courseName;
 
                                 //set visible the Excel will run in background  
@@ -1791,8 +1815,34 @@ namespace CSharpDEMO
                     string courseType = myObject.Get<String>("courseType");
                     string courseTime = myObject.Get<String>("courseTime");   //总课时数
                     string courseTimeLeft = myObject.Get<String>("courseTimeLeft");   //剩余课时数
-                    string coursePrice = myObject.Get<String>("price");   //单价
 
+                    string add_flag = myObject.Get<String>("add_flag");
+                    string price = myObject.Get<String>("price");
+                    int times1 = Convert.ToInt16(courseTimeLeft);
+                    if (add_flag == "yes")
+                    {
+                        string courseTimeLeft1 = myObject.Get<String>("courseTimeLeft1");   //剩余课时数
+                        string courseTimeLeft2 = myObject.Get<String>("courseTimeLeft2");   //剩余课时数
+                        string price1 = myObject.Get<String>("price1");
+                        string price2 = myObject.Get<String>("price2");
+                        times1 = Convert.ToInt16(courseTimeLeft1);
+                        int times2 = Convert.ToInt16(courseTimeLeft2);
+                        if (times1 == 0)
+                        {
+                            myObject["courseTimeLeft1"] = times2.ToString();
+                            myObject["price1"] = price2;
+                            myObject["price"] = price2;
+                            myObject["courseTimeLeft2"] = "0";
+                            //myObject["price2"] = "0";
+                            times1 = times2;
+                            price1 = price2;
+                        }
+                        price = price1;
+
+                    }
+
+
+                    //string coursePrice = myObject.Get<String>("price");   //单价
                     string objectID = myObject.ObjectId;
                     MessageBox.Show("学生：" + name + " 刷卡");
                     int times = Convert.ToInt16(courseTimeLeft);
@@ -1800,6 +1850,7 @@ namespace CSharpDEMO
                     { MessageBox.Show("剩余课时为0，请充值"); }
                     else
                     {
+                        myObject["courseTimeLeft1"] = (times1 - 1).ToString();
                         myObject["courseTimeLeft"] = (times - 1).ToString();
                         await myObject.SaveAsync();
                         writeCard(0x15, 1, s.S2U((times - 1).ToString()));       //剩余课时数写卡
@@ -1809,7 +1860,7 @@ namespace CSharpDEMO
                         Payroll["month"] = DateTime.Now.ToString("yyyyMM");
                         Payroll["student"] = myObject.Get<String>("name");
                         Payroll["teacher"] = myObject.Get<String>("stuTeacher");
-                        Payroll["pay"] = myObject.Get<String>("price");
+                        Payroll["pay"] = price;
                         Payroll["courseName"] = courseName;
                         await Payroll.SaveAsync();
                         textBox_nameShow.Text = name;
@@ -1884,7 +1935,7 @@ namespace CSharpDEMO
                             workSheet.Cells[rowCount + 1, 2] = DateTime.Now.ToString("yyyyMM");
                             workSheet.Cells[rowCount + 1, 3] = name;
                             workSheet.Cells[rowCount + 1, 4] = textBox_teacherShow.Text;
-                            workSheet.Cells[rowCount + 1, 5] = coursePrice;
+                            workSheet.Cells[rowCount + 1, 5] = price;
                             workSheet.Cells[rowCount + 1, 6] = courseName;
 
                             //set visible the Excel will run in background  
@@ -2383,6 +2434,16 @@ namespace CSharpDEMO
                        
                     }
                     break;
+                case "架子鼓":
+                    comboBox_stuTeacher.Items.Clear();
+                    AVQuery<AVObject> query8 = new AVQuery<AVObject>("Teacher").WhereEqualTo("course", "架子鼓");
+                    IEnumerable<AVObject> myObject8 = await query8.FindAsync();
+                    foreach (AVObject item in myObject8)
+                    {
+                        comboBox_stuTeacher.Items.Add(item.Get<String>("name"));
+
+                    }
+                    break;
                 case "二胡":
                     comboBox_stuTeacher.Items.Clear();
                     AVQuery<AVObject> query2 = new AVQuery<AVObject>("Teacher").WhereEqualTo("course", "二胡");
@@ -2698,13 +2759,15 @@ namespace CSharpDEMO
             await query.FindAsync().ContinueWith(t =>
             {
                 IEnumerable<AVObject> persons = t.Result;
-                //sum = 0;
                 int sum = persons.Count();
-
             });
 
             if (query.CountAsync().Result == 0)  //查到的数据为0个
             { MessageBox.Show("没有查到相关学生信息！"); }
+            else if (textBox_courseAddName.Text=="" || textBox_priceAdd.Text== "")
+            {
+                MessageBox.Show("请正确填写数额与单价！！");
+            }
             else
             {
                 AVObject myObject = query.FirstAsync().Result;
@@ -2721,6 +2784,8 @@ namespace CSharpDEMO
                 string courseTime = myObject.Get<String>("courseTime");   //总课时数
                 string courseTimeLeft = myObject.Get<String>("courseTimeLeft");   //剩余课时数
                 string stuTeacher = myObject.Get<String>("stuTeacher");
+                string price = myObject.Get<String>("price");
+
                 textBox_courseAdd.Text = courseName;
 
                 // Console.WriteLine("1");
@@ -2730,10 +2795,14 @@ namespace CSharpDEMO
                 //  Console.WriteLine("3");
                 int sumTimes = Convert.ToInt16(courseTime);
                 //  Console.WriteLine("4");
-                await myObject.SaveAsync().ContinueWith(t=>
+                await myObject.SaveAsync().ContinueWith(t =>
                 {
-                    
+                    myObject["add_flag"] = "yes";
+                    myObject["courseTimeLeft1"] = times.ToString();
                     myObject["courseTimeLeft"] = (times + addNum).ToString();
+                    myObject["courseTimeLeft2"] = addNum.ToString();
+                    myObject["price1"] = price;
+                    myObject["price2"] = textBox_priceAdd.Text;
                     Console.WriteLine("1");
                     myObject["courseTime"] = (sumTimes + addNum).ToString();
                     Console.WriteLine("2");
@@ -2741,12 +2810,12 @@ namespace CSharpDEMO
                     Console.WriteLine("3");
                 }
                 );
-               
-                string sumAddMoney=((times + addNum) * addprice).ToString();
+
+                string sumAddMoney = ((times + addNum) * addprice).ToString();
                 textBoxAddMoney.Text = sumAddMoney;
 
 
-                MessageBox.Show("充值成功！\n"+"学生："+name+"\n充值："+ addNum.ToString()+"课时\n"+ courseName);
+                MessageBox.Show("充值成功！\n" + "学生：" + name + "\n充值：" + addNum.ToString() + "课时\n" + courseName);
 
                 AVObject addCourse = new AVObject("addCourseRecord");
                 addCourse["time"] = DateTime.Now.ToString("yyyy/MM/dd,HH:mm:ss");
@@ -2758,21 +2827,13 @@ namespace CSharpDEMO
                 addCourse["courseAddNum"] = addNum.ToString();
                 addCourse["sumMoney"] = sumAddMoney;
                 await addCourse.SaveAsync();
-                //textBox_nameShow.Text = name;
-                //textBox_shenfen.Text = "学生";
-                //textBox4_courseNameShow.Text = courseName;
-                //textBoxCourseTypeShow.Text = courseType;
-                //textBox_telShow.Text = tel;
-                //textBox_courseTime_left.Text = (times - 1).ToString();
-                //textBox_courseTimeSum.Text = courseTime;
-                //textBox_teacherShow.Text = myObject.Get<String>("stuTeacher");
-                //string stuTeacher = textBox_teacherShow.Text;
+                
 
                 byte[] buffer = new byte[1];
                 int nRet_boomer = Reader.ControlBuzzer(20, 1, buffer);//（占空比，次数，没有用但是要的一个参数）
                 int nRet_led = Reader.ControlLED(20, 3, buffer);
-                    
-               
+
+
 
                 /*****存储数据到本地***************/
                 try
@@ -2855,7 +2916,7 @@ namespace CSharpDEMO
                     MessageBox.Show("本地数据存储错误" + erro.Message);
                     this.Close();
                 }
-                
+
             }
         }
 

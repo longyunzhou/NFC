@@ -252,7 +252,6 @@ D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.cspr
 D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.csproj.CopyComplete
 D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.exe
 D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.pdb
-D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.csprojAssemblyReference.cache
 D:\Github\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\obj\Release\CSharpDEMO.Form1.resources
 E:\Project\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\bin\Release\CSharpDEMO.exe.config
 E:\Project\NFC\CSharpWinForm_CH\CSharpDEMO\CSharpDEMO\bin\Release\CSharpDEMO.exe
