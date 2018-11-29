@@ -1981,10 +1981,10 @@ namespace CSharpDEMO
             }
             if (s.Unicode2String(is_reg) == "卡不存在")
             { MessageBox.Show("请先放上卡再进行操作"); }
-            else if (is_reg != "00000000000000000000000000000000" && is_reg !="")
-            {
-                MessageBox.Show("该卡已经被注册，请换一张卡！" + s.U2S(is_reg));
-            }
+           // else if (is_reg != "00000000000000000000000000000000" && is_reg !="")
+           // {
+           //     MessageBox.Show("该卡已经被注册，请换一张卡！" + s.U2S(is_reg));
+          //  }
             else if (radioButton_teacher.Checked)
             {
                 AVQuery<AVObject> query = new AVQuery<AVObject>("Teacher").WhereEqualTo("name", textBox_name_loster.Text).WhereEqualTo("tel", textBox_tel_loster.Text);
